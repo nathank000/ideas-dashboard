@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { NewProjectDialog } from "./new-project-dialog";
-import { useState } from "react";
 
 interface NewProjectCardProps {
   onProjectCreated: () => void;

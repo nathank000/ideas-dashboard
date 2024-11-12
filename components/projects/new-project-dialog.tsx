@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,8 +20,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Project } from "@/lib/types/project";
 import { saveProject, updateProject } from "@/lib/storage/projects";
-import { useState } from "react";
 import { toast } from "sonner";
+import { AttributeProfile, AttributeValue } from "@/lib/types/attributes";
+import { getStoredAttributeProfiles } from "@/lib/storage/attributes";
 
 interface NewProjectDialogProps {
   open: boolean;
@@ -42,11 +44,30 @@ export function NewProjectDialog({
   );
   const [dueDate, setDueDate] = useState(initialProject?.dueDate || "");
   const [progress, setProgress] = useState(initialProject?.progress || 0);
+  const [attributeProfileId, setAttributeProfileId] = useState<string>(
+    initialProject?.attributeProfileId || "none"
+  );
+  const [attributeProfiles, setAttributeProfiles] = useState<AttributeProfile[]>([]);
+
+  useEffect(() => {
+    setAttributeProfiles(getStoredAttributeProfiles());
+  }, []);
 
   const handleSubmit = () => {
     if (!title.trim() || !dueDate) {
       toast.error("Please fill in all required fields");
       return;
+    }
+
+    let initialAttributes: AttributeValue[] = [];
+    if (attributeProfileId !== "none") {
+      const profile = attributeProfiles.find(p => p.id === attributeProfileId);
+      if (profile) {
+        initialAttributes = profile.attributes.map(attr => ({
+          definitionId: attr.id,
+          value: attr.type === 'number' ? 0 : ''
+        }));
+      }
     }
 
     const projectData: Project = {
@@ -59,6 +80,9 @@ export function NewProjectDialog({
       team: initialProject?.team || [
         { name: "John Doe", avatar: "https://github.com/shadcn.png" },
       ],
+      resources: initialProject?.resources || [],
+      attributeProfileId: attributeProfileId === "none" ? undefined : attributeProfileId,
+      attributes: initialAttributes,
       createdAt: initialProject?.createdAt || new Date(),
       updatedAt: new Date(),
     };
@@ -79,6 +103,7 @@ export function NewProjectDialog({
       setStatus("planning");
       setDueDate("");
       setProgress(0);
+      setAttributeProfileId("none");
     }
   };
 
@@ -143,6 +168,22 @@ export function NewProjectDialog({
               value={dueDate}
               onChange={(e) => setDueDate(e.target.value)}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>Attribute Profile</Label>
+            <Select value={attributeProfileId} onValueChange={setAttributeProfileId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select an attribute profile" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                {attributeProfiles.map((profile) => (
+                  <SelectItem key={profile.id} value={profile.id}>
+                    {profile.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <div className="flex justify-end space-x-2">

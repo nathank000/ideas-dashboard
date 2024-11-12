@@ -1,4 +1,4 @@
-import { Project } from "../types/project";
+import { Project, ProjectResource } from "../types/project";
 
 const STORAGE_KEY = "projects";
 
@@ -27,4 +27,36 @@ export function deleteProject(id: string) {
   const projects = getStoredProjects();
   const filtered = projects.filter((project) => project.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+}
+
+export function addProjectResource(projectId: string, resource: ProjectResource) {
+  const projects = getStoredProjects();
+  const project = projects.find((p) => p.id === projectId);
+  if (project) {
+    project.resources = [...(project.resources || []), resource];
+    project.updatedAt = new Date();
+    updateProject(project);
+  }
+}
+
+export function updateProjectResource(projectId: string, resource: ProjectResource) {
+  const projects = getStoredProjects();
+  const project = projects.find((p) => p.id === projectId);
+  if (project) {
+    project.resources = (project.resources || []).map((r) =>
+      r.id === resource.id ? resource : r
+    );
+    project.updatedAt = new Date();
+    updateProject(project);
+  }
+}
+
+export function deleteProjectResource(projectId: string, resourceId: string) {
+  const projects = getStoredProjects();
+  const project = projects.find((p) => p.id === projectId);
+  if (project) {
+    project.resources = (project.resources || []).filter((r) => r.id !== resourceId);
+    project.updatedAt = new Date();
+    updateProject(project);
+  }
 }

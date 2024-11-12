@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   Lightbulb,
   Plus,
+  ListTodo,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -28,6 +29,7 @@ const sidebarItems = [
   { icon: Calendar, label: "Calendar", href: "/calendar" },
   { icon: FolderKanban, label: "Projects", href: "/projects" },
   { icon: MessagesSquare, label: "Messages", href: "/messages" },
+  { icon: ListTodo, label: "Attributes", href: "/attributes" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 

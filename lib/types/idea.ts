@@ -1,3 +1,5 @@
+import { AttributeValue } from "./attributes";
+
 export interface IdeaMetrics {
   technicalFeasibility: number;
   timeToMvp: number;
@@ -27,6 +29,8 @@ export interface Idea {
   description: string;
   metrics: IdeaMetrics;
   resources: IdeaResource[];
+  attributeProfileId?: string;
+  attributes: AttributeValue[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { Idea } from "@/lib/types/idea";
-import { getStoredIdeas } from "@/lib/storage";
+import { getStoredIdeas, updateIdea } from "@/lib/storage";
 import { SpiderChart } from "./spider-chart";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResourcesSection } from "./resources/resources-section";
+import { AttributesSection } from "@/components/attributes/attributes-section";
+import { AttributeValue } from "@/lib/types/attributes";
 
 interface IdeaDetailWrapperProps {
   id: string;
@@ -26,6 +28,18 @@ export function IdeaDetailWrapper({ id }: IdeaDetailWrapperProps) {
   useEffect(() => {
     loadIdea();
   }, [id]);
+
+  const handleAttributesUpdate = (profileId: string, attributes: AttributeValue[]) => {
+    if (idea) {
+      const updatedIdea = {
+        ...idea,
+        attributes,
+        updatedAt: new Date(),
+      };
+      updateIdea(updatedIdea);
+      setIdea(updatedIdea);
+    }
+  };
 
   if (!idea) {
     return <div>Idea not found</div>;
@@ -59,6 +73,14 @@ export function IdeaDetailWrapper({ id }: IdeaDetailWrapperProps) {
           <SpiderChart metrics={idea.metrics} />
         </CardContent>
       </Card>
+
+      {idea.attributeProfileId && (
+        <AttributesSection
+          attributeProfileId={idea.attributeProfileId}
+          attributes={idea.attributes || []}
+          onUpdate={handleAttributesUpdate}
+        />
+      )}
 
       <ResourcesSection
         ideaId={idea.id}
