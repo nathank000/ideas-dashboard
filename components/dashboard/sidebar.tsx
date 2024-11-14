@@ -24,12 +24,12 @@ import { NewIdeaDialog } from "@/components/ideas/new-idea-dialog";
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: Lightbulb, label: "Ideas", href: "/ideas" },
+  { icon: FolderKanban, label: "Projects", href: "/projects" },
+  { icon: ListTodo, label: "Attributes", href: "/attributes" },
   { icon: Users, label: "Users", href: "/users" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: Calendar, label: "Calendar", href: "/calendar" },
-  { icon: FolderKanban, label: "Projects", href: "/projects" },
   { icon: MessagesSquare, label: "Messages", href: "/messages" },
-  { icon: ListTodo, label: "Attributes", href: "/attributes" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
