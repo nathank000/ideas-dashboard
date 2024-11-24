@@ -41,6 +41,15 @@ export interface VentureEvent {
   createdAt: Date;
 }
 
+export interface MeetingNote {
+  id: string;
+  title: string;
+  when: string;
+  notes: string;
+  sentiment: 'positive' | 'negative' | 'neutral';
+  createdAt: Date;
+}
+
 export interface Venture {
   id: string;
   title: string;
@@ -50,6 +59,7 @@ export interface Venture {
   risks: VentureRisk[];
   assumptions: VentureAssumption[];
   events: VentureEvent[];
+  meetingNotes: MeetingNote[];
   attributeProfileId?: string;
   attributes: AttributeValue[];
   team: TeamMember[];

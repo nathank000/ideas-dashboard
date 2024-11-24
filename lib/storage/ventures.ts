@@ -1,4 +1,4 @@
-import { Venture, VentureResource, VentureRisk, VentureAssumption, VentureEvent } from "../types/venture";
+import { Venture, VentureResource, VentureRisk, VentureAssumption, VentureEvent, MeetingNote } from "../types/venture";
 
 const STORAGE_KEY = "ventures";
 
@@ -156,6 +156,39 @@ export function deleteVentureEvent(ventureId: string, eventId: string) {
   const venture = ventures.find((v) => v.id === ventureId);
   if (venture) {
     venture.events = (venture.events || []).filter((e) => e.id !== eventId);
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+// Meeting Notes methods
+export function addVentureMeetingNote(ventureId: string, note: MeetingNote) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.meetingNotes = [...(venture.meetingNotes || []), note];
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function updateVentureMeetingNote(ventureId: string, note: MeetingNote) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.meetingNotes = (venture.meetingNotes || []).map((n) =>
+      n.id === note.id ? note : n
+    );
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function deleteVentureMeetingNote(ventureId: string, noteId: string) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.meetingNotes = (venture.meetingNotes || []).filter((n) => n.id !== noteId);
     venture.updatedAt = new Date();
     updateVenture(venture);
   }

@@ -3,37 +3,29 @@
 import { useEffect, useState } from "react";
 import { Venture } from "@/lib/types/venture";
 import { getStoredVentures, updateVenture } from "@/lib/storage/ventures";
+import { SpiderChart } from "@/components/ideas/spider-chart";
 import { format } from "date-fns";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { NewVentureDialog } from "./new-venture-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ArrowLeft, CheckCircle2, Circle, Pencil } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ProjectResourcesSection } from "../projects/resources/project-resources-section";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProjectResourcesSection } from "@/components/projects/resources/project-resources-section";
 import { AttributesSection } from "@/components/attributes/attributes-section";
 import { AttributeValue } from "@/lib/types/attributes";
 import { RisksSection } from "./risks/risks-section";
 import { AssumptionsSection } from "./assumptions/assumptions-section";
 import { EventsSection } from "./events/events-section";
+import { MeetingNotesSection } from "./meeting-notes/meeting-notes-section";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface VentureDetailProps {
   id: string;
 }
 
 export function VentureDetail({ id }: VentureDetailProps) {
-  const router = useRouter();
   const [venture, setVenture] = useState<Venture | null>(null);
-  const [showEditDialog, setShowEditDialog] = useState(false);
 
   useEffect(() => {
     const ventures = getStoredVentures();
@@ -69,36 +61,26 @@ export function VentureDetail({ id }: VentureDetailProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/ventures">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold">{venture.title}</h1>
-            {venture.active ? (
-              <CheckCircle2 className="h-5 w-5 text-primary" />
-            ) : (
-              <Circle className="h-5 w-5 text-muted-foreground" />
-            )}
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" asChild>
+          <Link href="/ventures">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold mb-2">{venture.title}</h1>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Badge variant="secondary">{venture.status}</Badge>
+            <span>•</span>
+            <span>Created on {format(new Date(venture.createdAt), "MMMM d, yyyy")}</span>
           </div>
         </div>
-        <Button onClick={() => setShowEditDialog(true)}>
-          <Pencil className="h-4 w-4 mr-2" />
-          Edit Venture
-        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Venture Details</CardTitle>
-            <CardDescription>
-              Created on {format(new Date(venture.createdAt), "MMMM d, yyyy")}
-            </CardDescription>
+            <CardTitle>Overview</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -128,7 +110,6 @@ export function VentureDetail({ id }: VentureDetailProps) {
         <Card>
           <CardHeader>
             <CardTitle>Team Members</CardTitle>
-            <CardDescription>People working on this venture</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -153,6 +134,15 @@ export function VentureDetail({ id }: VentureDetailProps) {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Metrics Analysis</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SpiderChart metrics={venture.metrics} />
+        </CardContent>
+      </Card>
 
       {venture.attributeProfileId && (
         <AttributesSection
@@ -180,17 +170,16 @@ export function VentureDetail({ id }: VentureDetailProps) {
         onUpdate={handleVentureUpdate}
       />
 
+      <MeetingNotesSection
+        ventureId={venture.id}
+        meetingNotes={venture.meetingNotes || []}
+        onUpdate={handleVentureUpdate}
+      />
+
       <ProjectResourcesSection
         projectId={venture.id}
         resources={venture.resources || []}
         onUpdate={handleVentureUpdate}
-      />
-
-      <NewVentureDialog
-        open={showEditDialog}
-        onOpenChange={setShowEditDialog}
-        initialVenture={venture}
-        onVentureSaved={handleVentureUpdate}
       />
     </div>
   );
