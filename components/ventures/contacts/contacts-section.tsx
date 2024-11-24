@@ -15,6 +15,7 @@ import { ContactCard } from "./contact-card";
 import { ContactDialog } from "./contact-dialog";
 import { ContactDetailsDialog } from "./contact-details-dialog";
 import { addVentureContact, deleteVentureContact, updateVentureContact } from "@/lib/storage/ventures";
+import { saveContact, updateContact } from "@/lib/storage/contacts";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ContactsSectionProps {
@@ -39,8 +40,14 @@ export function ContactsSection({
 
   const handleSave = (contact: Contact) => {
     if (selectedContact) {
+      // Update the contact globally
+      updateContact(contact);
+      // Update the contact in the venture
       updateVentureContact(ventureId, contact);
     } else {
+      // Save or update the contact globally
+      saveContact(contact);
+      // Add the contact to the venture
       addVentureContact(ventureId, contact);
     }
     onUpdate();
@@ -48,7 +55,7 @@ export function ContactsSection({
   };
 
   const handleDelete = (contactId: string) => {
-    if (confirm("Are you sure you want to delete this contact?")) {
+    if (confirm("Are you sure you want to remove this contact from the venture?")) {
       deleteVentureContact(ventureId, contactId);
       onUpdate();
     }
