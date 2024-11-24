@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   Plus,
   ListTodo,
+  Users2,
   Rocket,
 } from "lucide-react";
 import Link from "next/link";
@@ -23,6 +24,7 @@ import { NewVentureDialog } from "@/components/ventures/new-venture-dialog";
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
   { icon: Rocket, label: "Ventures", href: "/ventures" },
+  { icon: Users2, label: "Contacts", href: "/contacts" },
   { icon: ListTodo, label: "Attributes", href: "/attributes" },
   { icon: Users, label: "Users", href: "/users" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },

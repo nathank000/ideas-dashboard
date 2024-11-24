@@ -2,17 +2,18 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Contact } from "@/lib/types/venture";
+import { Contact, VentureContact } from "@/lib/types/venture";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { Mail, Phone, Linkedin } from "lucide-react";
 
 interface ContactCardProps {
   contact: Contact;
-  onViewDetails: (contact: Contact) => void;
+  sentiment: VentureContact['sentiment'];
+  dateAdded: string;
+  onViewDetails: () => void;
 }
 
-export function ContactCard({ contact, onViewDetails }: ContactCardProps) {
+export function ContactCard({ contact, sentiment, dateAdded, onViewDetails }: ContactCardProps) {
   const sentimentColors = {
     positive: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100",
     negative: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100",
@@ -22,7 +23,7 @@ export function ContactCard({ contact, onViewDetails }: ContactCardProps) {
   return (
     <Card 
       className="hover:bg-muted/50 transition-colors cursor-pointer" 
-      onClick={() => onViewDetails(contact)}
+      onClick={onViewDetails}
     >
       <CardContent className="p-4 space-y-2">
         <div className="flex items-center justify-between">
@@ -31,28 +32,12 @@ export function ContactCard({ contact, onViewDetails }: ContactCardProps) {
             <div className="text-sm text-muted-foreground">{contact.title}</div>
             <div className="text-sm text-muted-foreground">{contact.company}</div>
           </div>
-          <Badge className={cn(sentimentColors[contact.sentiment])}>
-            {contact.sentiment}
+          <Badge className={cn(sentimentColors[sentiment])}>
+            {sentiment}
           </Badge>
         </div>
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Mail className="h-4 w-4" />
-            <span>Email</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Phone className="h-4 w-4" />
-            <span>Phone</span>
-          </div>
-          {contact.linkedIn && (
-            <div className="flex items-center gap-1">
-              <Linkedin className="h-4 w-4" />
-              <span>LinkedIn</span>
-            </div>
-          )}
-        </div>
-        <div className="text-xs text-muted-foreground">
-          Added {format(new Date(contact.dateAdded), "MMM d, yyyy")}
+        <div className="text-sm text-muted-foreground">
+          Added {format(new Date(dateAdded), "MMM d, yyyy")}
         </div>
       </CardContent>
     </Card>

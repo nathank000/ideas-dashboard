@@ -12,7 +12,16 @@ export function getStoredContacts(): Contact[] {
 
 export function saveContact(contact: Contact) {
   const contacts = getStoredContacts();
-  contacts.push(contact);
+  // Check if contact with same ID already exists
+  const existingIndex = contacts.findIndex(c => c.id === contact.id);
+  if (existingIndex !== -1) {
+    // Update existing contact
+    contacts[existingIndex] = contact;
+  } else {
+    // Add new contact with unique ID
+    contact.id = crypto.randomUUID();
+    contacts.push(contact);
+  }
   localStorage.setItem(STORAGE_KEY, JSON.stringify(contacts));
 }
 

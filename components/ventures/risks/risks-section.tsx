@@ -15,6 +15,7 @@ import { RiskCard } from "./risk-card";
 import { RiskDialog } from "./risk-dialog";
 import { RiskDetailsDialog } from "./risk-details-dialog";
 import { addVentureRisk, deleteVentureRisk, updateVentureRisk } from "@/lib/storage/ventures";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface RisksSectionProps {
   ventureId: string;
@@ -30,6 +31,18 @@ export function RisksSection({
   const [newDialogOpen, setNewDialogOpen] = useState(false);
   const [selectedRisk, setSelectedRisk] = useState<VentureRisk | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [mitigationFilter, setMitigationFilter] = useState<"all" | "mitigated" | "unmitigated">("all");
+
+  const filteredRisks = risks.filter(risk => {
+    switch (mitigationFilter) {
+      case "mitigated":
+        return risk.mitigated;
+      case "unmitigated":
+        return !risk.mitigated;
+      default:
+        return true;
+    }
+  });
 
   const handleSave = (risk: VentureRisk) => {
     if (selectedRisk) {
@@ -69,10 +82,21 @@ export function RisksSection({
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <ToggleGroup 
+          type="single" 
+          value={mitigationFilter} 
+          onValueChange={(value) => value && setMitigationFilter(value as typeof mitigationFilter)}
+          className="justify-start"
+        >
+          <ToggleGroupItem value="all">All</ToggleGroupItem>
+          <ToggleGroupItem value="mitigated">Mitigated</ToggleGroupItem>
+          <ToggleGroupItem value="unmitigated">Unmitigated</ToggleGroupItem>
+        </ToggleGroup>
+
         <div className="grid gap-2 md:grid-cols-2">
-          {risks?.length > 0 ? (
-            risks.map((risk) => (
+          {filteredRisks.length > 0 ? (
+            filteredRisks.map((risk) => (
               <RiskCard
                 key={risk.id}
                 risk={risk}
@@ -85,7 +109,7 @@ export function RisksSection({
             ))
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4 col-span-2">
-              No risks identified yet
+              No risks match the current filter
             </p>
           )}
         </div>

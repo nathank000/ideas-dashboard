@@ -8,19 +8,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Contact } from "@/lib/types/venture";
+import { Contact, VentureContact } from "@/lib/types/venture";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { ContactCard } from "./contact-card";
 import { ContactDialog } from "./contact-dialog";
 import { ContactDetailsDialog } from "./contact-details-dialog";
 import { addVentureContact, deleteVentureContact, updateVentureContact } from "@/lib/storage/ventures";
-import { saveContact, updateContact } from "@/lib/storage/contacts";
+import { saveContact, updateContact, getStoredContacts } from "@/lib/storage/contacts";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ContactsSectionProps {
   ventureId: string;
-  contacts: Contact[];
+  contacts: VentureContact[];
   onUpdate: () => void;
 }
 
@@ -30,25 +30,33 @@ export function ContactsSection({
   onUpdate,
 }: ContactsSectionProps) {
   const [newDialogOpen, setNewDialogOpen] = useState(false);
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [selectedContact, setSelectedContact] = useState<{contact: Contact, ventureContact: VentureContact} | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [sentimentFilter, setSentimentFilter] = useState<"all" | "positive" | "negative" | "neutral">("all");
 
-  const filteredContacts = contacts.filter(contact => 
-    sentimentFilter === "all" || contact.sentiment === sentimentFilter
+  const allContacts = getStoredContacts();
+  const contactsWithDetails = contacts
+    .map(ventureContact => ({
+      contact: allContacts.find(c => c.id === ventureContact.contactId),
+      ventureContact
+    }))
+    .filter((item): item is {contact: Contact, ventureContact: VentureContact} => item.contact !== undefined);
+
+  const filteredContacts = contactsWithDetails.filter(({ ventureContact }) => 
+    sentimentFilter === "all" || ventureContact.sentiment === sentimentFilter
   );
 
-  const handleSave = (contact: Contact) => {
+  const handleSave = (contact: Contact, sentiment: VentureContact['sentiment']) => {
     if (selectedContact) {
       // Update the contact globally
       updateContact(contact);
-      // Update the contact in the venture
-      updateVentureContact(ventureId, contact);
+      // Update the contact's sentiment in the venture
+      updateVentureContact(ventureId, contact.id, sentiment);
     } else {
       // Save or update the contact globally
       saveContact(contact);
-      // Add the contact to the venture
-      addVentureContact(ventureId, contact);
+      // Add the contact to the venture with sentiment
+      addVentureContact(ventureId, contact, sentiment);
     }
     onUpdate();
     setSelectedContact(null);
@@ -93,13 +101,15 @@ export function ContactsSection({
         <div className="grid gap-4 md:grid-cols-2">
           {filteredContacts.length > 0 ? (
             filteredContacts
-              .sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime())
-              .map((contact) => (
+              .sort((a, b) => new Date(b.ventureContact.dateAdded).getTime() - new Date(a.ventureContact.dateAdded).getTime())
+              .map(({ contact, ventureContact }) => (
                 <ContactCard
-                  key={contact.id}
+                  key={`${contact.id}-${ventureId}`}
                   contact={contact}
-                  onViewDetails={(contact) => {
-                    setSelectedContact(contact);
+                  sentiment={ventureContact.sentiment}
+                  dateAdded={ventureContact.dateAdded}
+                  onViewDetails={() => {
+                    setSelectedContact({ contact, ventureContact });
                     setDetailsOpen(true);
                   }}
                 />
@@ -116,20 +126,26 @@ export function ContactsSection({
         open={newDialogOpen}
         onOpenChange={setNewDialogOpen}
         onSave={handleSave}
+        existingContactIds={contacts.map(c => c.contactId)} // Pass existing contact IDs
       />
 
       {selectedContact && (
         <ContactDetailsDialog
-          contact={selectedContact}
+          contact={selectedContact.contact}
+          sentiment={selectedContact.ventureContact.sentiment}
           open={detailsOpen}
           onOpenChange={setDetailsOpen}
-          onEdit={(contact) => {
-            handleSave(contact);
+          onEdit={(contact, sentiment) => {
+            handleSave(contact, sentiment);
             setDetailsOpen(false);
           }}
           onDelete={() => {
-            handleDelete(selectedContact.id);
+            handleDelete(selectedContact.contact.id);
             setDetailsOpen(false);
+          }}
+          onSentimentChange={(sentiment) => {
+            updateVentureContact(ventureId, selectedContact.contact.id, sentiment);
+            onUpdate();
           }}
         />
       )}
