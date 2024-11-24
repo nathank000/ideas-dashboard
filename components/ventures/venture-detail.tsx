@@ -3,22 +3,23 @@
 import { useEffect, useState } from "react";
 import { Venture } from "@/lib/types/venture";
 import { getStoredVentures, updateVenture } from "@/lib/storage/ventures";
-import { SpiderChart } from "@/components/ideas/spider-chart";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Pencil } from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ProjectResourcesSection } from "@/components/projects/resources/project-resources-section";
-import { AttributesSection } from "@/components/attributes/attributes-section";
-import { AttributeValue } from "@/lib/types/attributes";
+import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { NewVentureDialog } from "./new-venture-dialog";
 import { RisksSection } from "./risks/risks-section";
 import { AssumptionsSection } from "./assumptions/assumptions-section";
 import { EventsSection } from "./events/events-section";
 import { MeetingNotesSection } from "./meeting-notes/meeting-notes-section";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DecisionLogsSection } from "./decision-logs/decision-logs-section";
+import { ResourcesSection } from "./resources/resources-section";
+import { AttributesSection } from "@/components/attributes/attributes-section";
+import { AttributeValue } from "@/lib/types/attributes";
 
 interface VentureDetailProps {
   id: string;
@@ -26,21 +27,22 @@ interface VentureDetailProps {
 
 export function VentureDetail({ id }: VentureDetailProps) {
   const [venture, setVenture] = useState<Venture | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
-  useEffect(() => {
+  const loadVenture = () => {
     const ventures = getStoredVentures();
     const found = ventures.find((v) => v.id === id);
     if (found) {
       setVenture(found);
     }
+  };
+
+  useEffect(() => {
+    loadVenture();
   }, [id]);
 
   const handleVentureUpdate = () => {
-    const ventures = getStoredVentures();
-    const updated = ventures.find((v) => v.id === id);
-    if (updated) {
-      setVenture(updated);
-    }
+    loadVenture();
   };
 
   const handleAttributesUpdate = (profileId: string, attributes: AttributeValue[]) => {
@@ -55,32 +57,37 @@ export function VentureDetail({ id }: VentureDetailProps) {
     }
   };
 
+  const formatDate = (dateString: string | Date) => {
+    const date = new Date(dateString);
+    return isValid(date) ? format(date, "MMMM d, yyyy") : "Invalid date";
+  };
+
   if (!venture) {
     return <div>Venture not found</div>;
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/ventures">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold mb-2">{venture.title}</h1>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Badge variant="secondary">{venture.status}</Badge>
-            <span>•</span>
-            <span>Created on {format(new Date(venture.createdAt), "MMMM d, yyyy")}</span>
-          </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/ventures">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <h1 className="text-3xl font-bold">{venture.title}</h1>
+          <Badge variant="secondary">{venture.status}</Badge>
         </div>
+        <Button onClick={() => setShowEditDialog(true)}>
+          <Pencil className="h-4 w-4 mr-2" />
+          Edit Venture
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Overview</CardTitle>
+            <CardTitle>Venture Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -96,14 +103,12 @@ export function VentureDetail({ id }: VentureDetailProps) {
               </div>
               <Progress value={venture.progress} />
             </div>
-            {venture.dueDate && (
-              <div className="space-y-1">
-                <h3 className="font-medium">Due Date</h3>
-                <p className="text-sm text-muted-foreground">
-                  {format(new Date(venture.dueDate), "MMMM d, yyyy")}
-                </p>
-              </div>
-            )}
+            <div className="space-y-1">
+              <h3 className="font-medium">Due Date</h3>
+              <p className="text-sm text-muted-foreground">
+                {formatDate(venture.dueDate)}
+              </p>
+            </div>
           </CardContent>
         </Card>
 
@@ -135,15 +140,6 @@ export function VentureDetail({ id }: VentureDetailProps) {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Metrics Analysis</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SpiderChart metrics={venture.metrics} />
-        </CardContent>
-      </Card>
-
       {venture.attributeProfileId && (
         <AttributesSection
           attributeProfileId={venture.attributeProfileId}
@@ -151,6 +147,12 @@ export function VentureDetail({ id }: VentureDetailProps) {
           onUpdate={handleAttributesUpdate}
         />
       )}
+
+      <ResourcesSection
+        ventureId={venture.id}
+        resources={venture.resources || []}
+        onUpdate={handleVentureUpdate}
+      />
 
       <RisksSection
         ventureId={venture.id}
@@ -176,10 +178,17 @@ export function VentureDetail({ id }: VentureDetailProps) {
         onUpdate={handleVentureUpdate}
       />
 
-      <ProjectResourcesSection
-        projectId={venture.id}
-        resources={venture.resources || []}
+      <DecisionLogsSection
+        ventureId={venture.id}
+        decisionLogs={venture.decisionLogs || []}
         onUpdate={handleVentureUpdate}
+      />
+
+      <NewVentureDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        initialVenture={venture}
+        onVentureSaved={handleVentureUpdate}
       />
     </div>
   );

@@ -1,14 +1,6 @@
-import { AttributeValue } from "./attributes";
-import { IdeaMetrics } from "./idea";
-import { TeamMember } from "./project";
-
-export interface VentureResource {
-  id: string;
-  title: string;
-  description: string;
-  type: 'link' | 'file';
-  url: string;
-  createdAt: Date;
+export interface TeamMember {
+  name: string;
+  avatar: string;
 }
 
 export interface VentureRisk {
@@ -50,23 +42,56 @@ export interface MeetingNote {
   createdAt: Date;
 }
 
+export interface DecisionLog {
+  id: string;
+  title: string;
+  when: string;
+  notes: string;
+  sentiment: 'positive' | 'negative' | 'neutral';
+  owner: string;
+  createdAt: Date;
+}
+
 export interface Venture {
   id: string;
   title: string;
   description: string;
-  metrics: IdeaMetrics;
-  resources: VentureResource[];
+  metrics: {
+    technicalFeasibility: number;
+    timeToMvp: number;
+    costToDevelop: number;
+    marketDemand: number;
+    scalability: number;
+    maintenanceComplexity: number;
+    industryFamiliarity: number;
+    industryRestrictions: number;
+    prototypability: number;
+    assumptions: number;
+    userAdjacency: number;
+  };
+  resources: {
+    id: string;
+    title: string;
+    description: string;
+    type: 'link' | 'file';
+    url: string;
+    createdAt: Date;
+  }[];
+  attributeProfileId?: string;
+  attributes: {
+    definitionId: string;
+    value: string | number | boolean;
+  }[];
+  team: TeamMember[];
+  progress: number;
+  dueDate: string;
+  status: 'planning' | 'in-progress' | 'review' | 'completed';
+  active: boolean;
   risks: VentureRisk[];
   assumptions: VentureAssumption[];
   events: VentureEvent[];
   meetingNotes: MeetingNote[];
-  attributeProfileId?: string;
-  attributes: AttributeValue[];
-  team: TeamMember[];
-  progress: number;
-  dueDate?: string;
-  status: "planning" | "in-progress" | "review" | "completed";
-  active: boolean;
+  decisionLogs: DecisionLog[];
   createdAt: Date;
   updatedAt: Date;
 }

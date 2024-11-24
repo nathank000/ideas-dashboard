@@ -1,4 +1,4 @@
-import { Venture, VentureResource, VentureRisk, VentureAssumption, VentureEvent, MeetingNote } from "../types/venture";
+import { Venture, VentureRisk, VentureAssumption, VentureEvent, MeetingNote, DecisionLog } from "../types/venture";
 
 const STORAGE_KEY = "ventures";
 
@@ -27,39 +27,6 @@ export function deleteVenture(id: string) {
   const ventures = getStoredVentures();
   const filtered = ventures.filter((venture) => venture.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-}
-
-// Resource methods
-export function addVentureResource(ventureId: string, resource: VentureResource) {
-  const ventures = getStoredVentures();
-  const venture = ventures.find((v) => v.id === ventureId);
-  if (venture) {
-    venture.resources = [...(venture.resources || []), resource];
-    venture.updatedAt = new Date();
-    updateVenture(venture);
-  }
-}
-
-export function updateVentureResource(ventureId: string, resource: VentureResource) {
-  const ventures = getStoredVentures();
-  const venture = ventures.find((v) => v.id === ventureId);
-  if (venture) {
-    venture.resources = (venture.resources || []).map((r) =>
-      r.id === resource.id ? resource : r
-    );
-    venture.updatedAt = new Date();
-    updateVenture(venture);
-  }
-}
-
-export function deleteVentureResource(ventureId: string, resourceId: string) {
-  const ventures = getStoredVentures();
-  const venture = ventures.find((v) => v.id === ventureId);
-  if (venture) {
-    venture.resources = (venture.resources || []).filter((r) => r.id !== resourceId);
-    venture.updatedAt = new Date();
-    updateVenture(venture);
-  }
 }
 
 // Risk methods
@@ -161,7 +128,7 @@ export function deleteVentureEvent(ventureId: string, eventId: string) {
   }
 }
 
-// Meeting Notes methods
+// Meeting Note methods
 export function addVentureMeetingNote(ventureId: string, note: MeetingNote) {
   const ventures = getStoredVentures();
   const venture = ventures.find((v) => v.id === ventureId);
@@ -189,6 +156,39 @@ export function deleteVentureMeetingNote(ventureId: string, noteId: string) {
   const venture = ventures.find((v) => v.id === ventureId);
   if (venture) {
     venture.meetingNotes = (venture.meetingNotes || []).filter((n) => n.id !== noteId);
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+// Decision Log methods
+export function addVentureDecisionLog(ventureId: string, decision: DecisionLog) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.decisionLogs = [...(venture.decisionLogs || []), decision];
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function updateVentureDecisionLog(ventureId: string, decision: DecisionLog) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.decisionLogs = (venture.decisionLogs || []).map((d) =>
+      d.id === decision.id ? decision : d
+    );
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function deleteVentureDecisionLog(ventureId: string, decisionId: string) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.decisionLogs = (venture.decisionLogs || []).filter((d) => d.id !== decisionId);
     venture.updatedAt = new Date();
     updateVenture(venture);
   }
