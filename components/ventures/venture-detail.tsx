@@ -3,24 +3,24 @@
 import { useEffect, useState } from "react";
 import { Venture } from "@/lib/types/venture";
 import { getStoredVentures, updateVenture } from "@/lib/storage/ventures";
-import { format, isValid } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, Pencil } from "lucide-react";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { SpiderChart } from "./spider-chart";
+import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { NewVentureDialog } from "./new-venture-dialog";
+import { ResourcesSection } from "./resources/resources-section";
+import { AttributesSection } from "@/components/attributes/attributes-section";
 import { RisksSection } from "./risks/risks-section";
 import { AssumptionsSection } from "./assumptions/assumptions-section";
 import { EventsSection } from "./events/events-section";
 import { MeetingNotesSection } from "./meeting-notes/meeting-notes-section";
 import { DecisionLogsSection } from "./decision-logs/decision-logs-section";
-import { ResourcesSection } from "./resources/resources-section";
-import { AttributesSection } from "@/components/attributes/attributes-section";
+import { ContactsSection } from "./contacts/contacts-section";
+import { NewVentureDialog } from "./new-venture-dialog";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Pencil } from "lucide-react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 import { AttributeValue } from "@/lib/types/attributes";
-import { SpiderChart } from "./spider-chart";
+import { CheckCircle2, Circle } from "lucide-react";
 
 interface VentureDetailProps {
   id: string;
@@ -30,20 +30,20 @@ export function VentureDetail({ id }: VentureDetailProps) {
   const [venture, setVenture] = useState<Venture | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
-  const loadVenture = () => {
+  useEffect(() => {
     const ventures = getStoredVentures();
     const found = ventures.find((v) => v.id === id);
     if (found) {
       setVenture(found);
     }
-  };
-
-  useEffect(() => {
-    loadVenture();
   }, [id]);
 
   const handleVentureUpdate = () => {
-    loadVenture();
+    const ventures = getStoredVentures();
+    const updated = ventures.find((v) => v.id === id);
+    if (updated) {
+      setVenture(updated);
+    }
   };
 
   const handleAttributesUpdate = (profileId: string, attributes: AttributeValue[]) => {
@@ -56,11 +56,6 @@ export function VentureDetail({ id }: VentureDetailProps) {
       updateVenture(updatedVenture);
       setVenture(updatedVenture);
     }
-  };
-
-  const formatDate = (dateString: string | Date) => {
-    const date = new Date(dateString);
-    return isValid(date) ? format(date, "MMMM d, yyyy") : "Invalid date";
   };
 
   if (!venture) {
@@ -76,7 +71,14 @@ export function VentureDetail({ id }: VentureDetailProps) {
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold">{venture.title}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-bold">{venture.title}</h1>
+            {venture.active ? (
+              <CheckCircle2 className="h-5 w-5 text-primary" />
+            ) : (
+              <Circle className="h-5 w-5 text-muted-foreground" />
+            )}
+          </div>
           <Badge variant="secondary">{venture.status}</Badge>
         </div>
         <Button onClick={() => setShowEditDialog(true)}>
@@ -97,58 +99,32 @@ export function VentureDetail({ id }: VentureDetailProps) {
                 {venture.description || "No description provided."}
               </p>
             </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Progress</span>
-                <span>{venture.progress}%</span>
-              </div>
-              <Progress value={venture.progress} />
-            </div>
             <div className="space-y-1">
-              <h3 className="font-medium">Due Date</h3>
+              <h3 className="font-medium">Created</h3>
               <p className="text-sm text-muted-foreground">
-                {formatDate(venture.dueDate)}
+                {format(new Date(venture.createdAt), "MMMM d, yyyy")}
               </p>
             </div>
+            {venture.dueDate && (
+              <div className="space-y-1">
+                <h3 className="font-medium">Due Date</h3>
+                <p className="text-sm text-muted-foreground">
+                  {format(new Date(venture.dueDate), "MMMM d, yyyy")}
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Team Members</CardTitle>
+            <CardTitle>Metrics Analysis</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {venture.team.map((member, index) => (
-                <div key={index} className="flex items-center gap-4">
-                  <Avatar>
-                    <AvatarImage src={member.avatar} alt={member.name} />
-                    <AvatarFallback>
-                      {member.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">{member.name}</p>
-                    <p className="text-sm text-muted-foreground">Team Member</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <SpiderChart metrics={venture.metrics} />
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Metrics Analysis</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SpiderChart metrics={venture.metrics} />
-        </CardContent>
-      </Card>
 
       {venture.attributeProfileId && (
         <AttributesSection
@@ -157,6 +133,12 @@ export function VentureDetail({ id }: VentureDetailProps) {
           onUpdate={handleAttributesUpdate}
         />
       )}
+
+      <ContactsSection
+        ventureId={venture.id}
+        contacts={venture.contacts || []}
+        onUpdate={handleVentureUpdate}
+      />
 
       <ResourcesSection
         ventureId={venture.id}

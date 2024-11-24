@@ -1,0 +1,113 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Contact } from "@/lib/types/venture";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { ContactCard } from "./contact-card";
+import { ContactDialog } from "./contact-dialog";
+import { ContactDetailsDialog } from "./contact-details-dialog";
+import { addVentureContact, deleteVentureContact, updateVentureContact } from "@/lib/storage/ventures";
+
+interface ContactsSectionProps {
+  ventureId: string;
+  contacts: Contact[];
+  onUpdate: () => void;
+}
+
+export function ContactsSection({
+  ventureId,
+  contacts,
+  onUpdate,
+}: ContactsSectionProps) {
+  const [newDialogOpen, setNewDialogOpen] = useState(false);
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  const handleSave = (contact: Contact) => {
+    if (selectedContact) {
+      updateVentureContact(ventureId, contact);
+    } else {
+      addVentureContact(ventureId, contact);
+    }
+    onUpdate();
+    setSelectedContact(null);
+  };
+
+  const handleDelete = (contactId: string) => {
+    if (confirm("Are you sure you want to delete this contact?")) {
+      deleteVentureContact(ventureId, contactId);
+      onUpdate();
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle>Contacts</CardTitle>
+            <CardDescription>
+              Track important contacts and relationships
+            </CardDescription>
+          </div>
+          <Button onClick={() => setNewDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Contact
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="grid gap-4 md:grid-cols-2">
+          {contacts?.length > 0 ? (
+            contacts
+              .sort((a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime())
+              .map((contact) => (
+                <ContactCard
+                  key={contact.id}
+                  contact={contact}
+                  onViewDetails={(contact) => {
+                    setSelectedContact(contact);
+                    setDetailsOpen(true);
+                  }}
+                />
+              ))
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4 col-span-2">
+              No contacts added yet
+            </p>
+          )}
+        </div>
+      </CardContent>
+
+      <ContactDialog
+        open={newDialogOpen}
+        onOpenChange={setNewDialogOpen}
+        onSave={handleSave}
+      />
+
+      {selectedContact && (
+        <ContactDetailsDialog
+          contact={selectedContact}
+          open={detailsOpen}
+          onOpenChange={setDetailsOpen}
+          onEdit={(contact) => {
+            handleSave(contact);
+            setDetailsOpen(false);
+          }}
+          onDelete={() => {
+            handleDelete(selectedContact.id);
+            setDetailsOpen(false);
+          }}
+        />
+      )}
+    </Card>
+  );
+}

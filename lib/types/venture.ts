@@ -3,6 +3,20 @@ export interface TeamMember {
   avatar: string;
 }
 
+export interface Contact {
+  id: string;
+  name: string;
+  title: string;
+  company: string;
+  phone: string;
+  email: string;
+  linkedIn: string;
+  dateAdded: string;
+  notes: string;
+  sentiment: 'positive' | 'negative' | 'neutral';
+  createdAt: Date;
+}
+
 export interface VentureRisk {
   id: string;
   title: string;
@@ -92,6 +106,7 @@ export interface Venture {
   events: VentureEvent[];
   meetingNotes: MeetingNote[];
   decisionLogs: DecisionLog[];
+  contacts: Contact[];
   createdAt: Date;
   updatedAt: Date;
 }

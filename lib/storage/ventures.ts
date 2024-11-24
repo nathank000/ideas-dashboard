@@ -1,6 +1,6 @@
-import { Venture, VentureRisk, VentureAssumption, VentureEvent, MeetingNote, DecisionLog } from "../types/venture";
-
 const STORAGE_KEY = "ventures";
+
+import { Venture, Contact, VentureRisk, VentureAssumption, VentureEvent, MeetingNote, DecisionLog } from "../types/venture";
 
 export function getStoredVentures(): Venture[] {
   if (typeof window === "undefined") return [];
@@ -128,7 +128,7 @@ export function deleteVentureEvent(ventureId: string, eventId: string) {
   }
 }
 
-// Meeting Note methods
+// Meeting note methods
 export function addVentureMeetingNote(ventureId: string, note: MeetingNote) {
   const ventures = getStoredVentures();
   const venture = ventures.find((v) => v.id === ventureId);
@@ -161,7 +161,7 @@ export function deleteVentureMeetingNote(ventureId: string, noteId: string) {
   }
 }
 
-// Decision Log methods
+// Decision log methods
 export function addVentureDecisionLog(ventureId: string, decision: DecisionLog) {
   const ventures = getStoredVentures();
   const venture = ventures.find((v) => v.id === ventureId);
@@ -189,6 +189,39 @@ export function deleteVentureDecisionLog(ventureId: string, decisionId: string) 
   const venture = ventures.find((v) => v.id === ventureId);
   if (venture) {
     venture.decisionLogs = (venture.decisionLogs || []).filter((d) => d.id !== decisionId);
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+// Contact methods
+export function addVentureContact(ventureId: string, contact: Contact) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.contacts = [...(venture.contacts || []), contact];
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function updateVentureContact(ventureId: string, contact: Contact) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.contacts = (venture.contacts || []).map((c) =>
+      c.id === contact.id ? contact : c
+    );
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function deleteVentureContact(ventureId: string, contactId: string) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.contacts = (venture.contacts || []).filter((c) => c.id !== contactId);
     venture.updatedAt = new Date();
     updateVenture(venture);
   }
