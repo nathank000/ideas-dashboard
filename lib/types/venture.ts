@@ -20,6 +20,16 @@ export interface VentureRisk {
   createdAt: Date;
 }
 
+export interface VentureAssumption {
+  id: string;
+  title: string;
+  type: 'technical' | 'strategic' | 'value' | 'operational';
+  detail: string;
+  notes: string;
+  holdsTrue: boolean;
+  createdAt: Date;
+}
+
 export interface Venture {
   id: string;
   title: string;
@@ -27,6 +37,7 @@ export interface Venture {
   metrics: IdeaMetrics;
   resources: VentureResource[];
   risks: VentureRisk[];
+  assumptions: VentureAssumption[];
   attributeProfileId?: string;
   attributes: AttributeValue[];
   team: TeamMember[];

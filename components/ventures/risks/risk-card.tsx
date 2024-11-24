@@ -14,23 +14,28 @@ interface RiskCardProps {
 export function RiskCard({ risk, onMitigatedChange, onViewDetails }: RiskCardProps) {
   return (
     <Card className="hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => onViewDetails(risk)}>
-      <CardContent className="p-4 flex items-center justify-between">
-        <span className="font-medium">{risk.title}</span>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="ml-2"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMitigatedChange({ ...risk, mitigated: !risk.mitigated });
-          }}
-        >
-          {risk.mitigated ? (
-            <CheckCircle2 className="h-4 w-4 text-primary" />
-          ) : (
-            <Circle className="h-4 w-4 text-muted-foreground" />
-          )}
-        </Button>
+      <CardContent className="p-4 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="font-medium">{risk.title}</span>
+        </div>
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span>Risk mitigated?</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="ml-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMitigatedChange({ ...risk, mitigated: !risk.mitigated });
+            }}
+          >
+            {risk.mitigated ? (
+              <CheckCircle2 className="h-4 w-4 text-primary" />
+            ) : (
+              <Circle className="h-4 w-4 text-muted-foreground" />
+            )}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

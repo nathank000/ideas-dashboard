@@ -7,7 +7,6 @@ import { format } from "date-fns";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { NewVentureDialog } from "./new-venture-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -17,14 +16,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SpiderChart } from "@/components/ideas/spider-chart";
-import { ProjectResourcesSection } from "@/components/projects/resources/project-resources-section";
+import { ProjectResourcesSection } from "../projects/resources/project-resources-section";
 import { AttributesSection } from "@/components/attributes/attributes-section";
 import { AttributeValue } from "@/lib/types/attributes";
 import { RisksSection } from "./risks/risks-section";
+import { AssumptionsSection } from "./assumptions/assumptions-section";
 
 interface VentureDetailProps {
   id: string;
@@ -63,18 +62,6 @@ export function VentureDetail({ id }: VentureDetailProps) {
     }
   };
 
-  const handleActiveToggle = () => {
-    if (venture) {
-      const updatedVenture = {
-        ...venture,
-        active: !venture.active,
-        updatedAt: new Date(),
-      };
-      updateVenture(updatedVenture);
-      setVenture(updatedVenture);
-    }
-  };
-
   if (!venture) {
     return <div>Venture not found</div>;
   }
@@ -88,22 +75,20 @@ export function VentureDetail({ id }: VentureDetailProps) {
               <ArrowLeft className="h-4 w-4" />
             </Link>
           </Button>
-          <h1 className="text-3xl font-bold">{venture.title}</h1>
-          <Badge variant="secondary">{venture.status}</Badge>
-        </div>
-        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <Switch
-              checked={venture.active}
-              onCheckedChange={handleActiveToggle}
-            />
-            <span className="text-sm">Active</span>
+            <h1 className="text-3xl font-bold">{venture.title}</h1>
+            {venture.active ? (
+              <CheckCircle2 className="h-5 w-5 text-primary" />
+            ) : (
+              <Circle className="h-5 w-5 text-muted-foreground" />
+            )}
+            <Badge variant="secondary">{venture.status}</Badge>
           </div>
-          <Button onClick={() => setShowEditDialog(true)}>
-            <Pencil className="h-4 w-4 mr-2" />
-            Edit Venture
-          </Button>
         </div>
+        <Button onClick={() => setShowEditDialog(true)}>
+          <Pencil className="h-4 w-4 mr-2" />
+          Edit Venture
+        </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -168,15 +153,6 @@ export function VentureDetail({ id }: VentureDetailProps) {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Metrics Analysis</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SpiderChart metrics={venture.metrics} />
-        </CardContent>
-      </Card>
-
       {venture.attributeProfileId && (
         <AttributesSection
           attributeProfileId={venture.attributeProfileId}
@@ -188,6 +164,12 @@ export function VentureDetail({ id }: VentureDetailProps) {
       <RisksSection
         ventureId={venture.id}
         risks={venture.risks || []}
+        onUpdate={handleVentureUpdate}
+      />
+
+      <AssumptionsSection
+        ventureId={venture.id}
+        assumptions={venture.assumptions || []}
         onUpdate={handleVentureUpdate}
       />
 

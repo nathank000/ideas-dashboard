@@ -1,4 +1,4 @@
-import { Venture, VentureResource, VentureRisk } from "../types/venture";
+import { Venture, VentureResource, VentureRisk, VentureAssumption } from "../types/venture";
 
 const STORAGE_KEY = "ventures";
 
@@ -88,6 +88,38 @@ export function deleteVentureRisk(ventureId: string, riskId: string) {
   const venture = ventures.find((v) => v.id === ventureId);
   if (venture) {
     venture.risks = (venture.risks || []).filter((r) => r.id !== riskId);
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function addVentureAssumption(ventureId: string, assumption: VentureAssumption) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.assumptions = [...(venture.assumptions || []), assumption];
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function updateVentureAssumption(ventureId: string, assumption: VentureAssumption) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.assumptions = (venture.assumptions || []).map((a) =>
+      a.id === assumption.id ? assumption : a
+    );
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function deleteVentureAssumption(ventureId: string, assumptionId: string) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.assumptions = (venture.assumptions || []).filter((a) => a.id !== assumptionId);
     venture.updatedAt = new Date();
     updateVenture(venture);
   }
