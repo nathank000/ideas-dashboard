@@ -20,6 +20,7 @@ import { DecisionLogsSection } from "./decision-logs/decision-logs-section";
 import { ResourcesSection } from "./resources/resources-section";
 import { AttributesSection } from "@/components/attributes/attributes-section";
 import { AttributeValue } from "@/lib/types/attributes";
+import { SpiderChart } from "./spider-chart";
 
 interface VentureDetailProps {
   id: string;
@@ -139,6 +140,15 @@ export function VentureDetail({ id }: VentureDetailProps) {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Metrics Analysis</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SpiderChart metrics={venture.metrics} />
+        </CardContent>
+      </Card>
 
       {venture.attributeProfileId && (
         <AttributesSection
