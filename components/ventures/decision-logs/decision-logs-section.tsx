@@ -15,6 +15,7 @@ import { DecisionLogCard } from "./decision-log-card";
 import { DecisionLogDialog } from "./decision-log-dialog";
 import { DecisionLogDetailsDialog } from "./decision-log-details-dialog";
 import { addVentureDecisionLog, deleteVentureDecisionLog, updateVentureDecisionLog } from "@/lib/storage/ventures";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface DecisionLogsSectionProps {
   ventureId: string;
@@ -30,6 +31,11 @@ export function DecisionLogsSection({
   const [newDialogOpen, setNewDialogOpen] = useState(false);
   const [selectedDecision, setSelectedDecision] = useState<DecisionLog | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [sentimentFilter, setSentimentFilter] = useState<"all" | "positive" | "negative" | "neutral">("all");
+
+  const filteredDecisions = decisionLogs.filter(decision => 
+    sentimentFilter === "all" || decision.sentiment === sentimentFilter
+  );
 
   const handleSave = (decision: DecisionLog) => {
     if (selectedDecision) {
@@ -64,10 +70,22 @@ export function DecisionLogsSection({
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <ToggleGroup 
+          type="single" 
+          value={sentimentFilter} 
+          onValueChange={(value) => value && setSentimentFilter(value as typeof sentimentFilter)}
+          className="justify-start"
+        >
+          <ToggleGroupItem value="all">All</ToggleGroupItem>
+          <ToggleGroupItem value="positive">Positive</ToggleGroupItem>
+          <ToggleGroupItem value="negative">Negative</ToggleGroupItem>
+          <ToggleGroupItem value="neutral">Neutral</ToggleGroupItem>
+        </ToggleGroup>
+
         <div className="grid gap-2 md:grid-cols-2">
-          {decisionLogs?.length > 0 ? (
-            decisionLogs
+          {filteredDecisions.length > 0 ? (
+            filteredDecisions
               .sort((a, b) => new Date(b.when).getTime() - new Date(a.when).getTime())
               .map((decision) => (
                 <DecisionLogCard
@@ -81,7 +99,7 @@ export function DecisionLogsSection({
               ))
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4 col-span-2">
-              No decisions logged yet
+              No decisions match the current filter
             </p>
           )}
         </div>

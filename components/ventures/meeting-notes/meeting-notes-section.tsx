@@ -15,6 +15,7 @@ import { MeetingNoteCard } from "./meeting-note-card";
 import { MeetingNoteDialog } from "./meeting-note-dialog";
 import { MeetingNoteDetailsDialog } from "./meeting-note-details-dialog";
 import { addVentureMeetingNote, deleteVentureMeetingNote, updateVentureMeetingNote } from "@/lib/storage/ventures";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface MeetingNotesSectionProps {
   ventureId: string;
@@ -30,6 +31,11 @@ export function MeetingNotesSection({
   const [newDialogOpen, setNewDialogOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<MeetingNote | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [sentimentFilter, setSentimentFilter] = useState<"all" | "positive" | "negative" | "neutral">("all");
+
+  const filteredNotes = meetingNotes.filter(note => 
+    sentimentFilter === "all" || note.sentiment === sentimentFilter
+  );
 
   const handleSave = (note: MeetingNote) => {
     if (selectedNote) {
@@ -64,10 +70,22 @@ export function MeetingNotesSection({
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        <ToggleGroup 
+          type="single" 
+          value={sentimentFilter} 
+          onValueChange={(value) => value && setSentimentFilter(value as typeof sentimentFilter)}
+          className="justify-start"
+        >
+          <ToggleGroupItem value="all">All</ToggleGroupItem>
+          <ToggleGroupItem value="positive">Positive</ToggleGroupItem>
+          <ToggleGroupItem value="negative">Negative</ToggleGroupItem>
+          <ToggleGroupItem value="neutral">Neutral</ToggleGroupItem>
+        </ToggleGroup>
+
         <div className="grid gap-2 md:grid-cols-2">
-          {meetingNotes?.length > 0 ? (
-            meetingNotes
+          {filteredNotes.length > 0 ? (
+            filteredNotes
               .sort((a, b) => new Date(b.when).getTime() - new Date(a.when).getTime())
               .map((note) => (
                 <MeetingNoteCard
@@ -81,7 +99,7 @@ export function MeetingNotesSection({
               ))
           ) : (
             <p className="text-sm text-muted-foreground text-center py-4 col-span-2">
-              No meeting notes yet
+              No meeting notes match the current filter
             </p>
           )}
         </div>
