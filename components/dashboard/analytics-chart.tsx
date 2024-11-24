@@ -20,35 +20,41 @@ import {
   Legend,
 } from "recharts";
 import { useTheme } from "next-themes";
-import { getStoredIdeas } from "@/lib/storage";
+import { getStoredVentures } from "@/lib/storage/ventures";
 import { useEffect, useState } from "react";
-import { Idea } from "@/lib/types/idea";
+import { Venture } from "@/lib/types/venture";
 import { format, subDays, startOfDay } from "date-fns";
 
 export function AnalyticsChart() {
   const { theme } = useTheme();
-  const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [ventures, setVentures] = useState<Venture[]>([]);
 
   useEffect(() => {
-    setIdeas(getStoredIdeas());
+    setVentures(getStoredVentures());
   }, []);
 
-  // Prepare data for ideas created over time
+  // Prepare data for ventures created over time
   const last7Days = Array.from({ length: 7 }, (_, i) => {
     const date = startOfDay(subDays(new Date(), i));
-    const ideasOnDay = ideas.filter(
-      (idea) => startOfDay(new Date(idea.createdAt)).getTime() === date.getTime()
+    const venturesOnDay = ventures.filter(
+      (venture) => startOfDay(new Date(venture.createdAt)).getTime() === date.getTime()
+    ).length;
+    const activeVenturesOnDay = ventures.filter(
+      (venture) => 
+        startOfDay(new Date(venture.createdAt)).getTime() === date.getTime() &&
+        venture.active
     ).length;
     return {
       date: format(date, "MMM d"),
-      ideas: ideasOnDay,
+      ventures: venturesOnDay,
+      active: activeVenturesOnDay,
     };
   }).reverse();
 
   // Prepare data for average metrics
-  const metricAverages = ideas.reduce(
-    (acc, idea) => {
-      Object.entries(idea.metrics).forEach(([key, value]) => {
+  const metricAverages = ventures.reduce(
+    (acc, venture) => {
+      Object.entries(venture.metrics).forEach(([key, value]) => {
         acc[key] = (acc[key] || 0) + value;
       });
       return acc;
@@ -57,7 +63,7 @@ export function AnalyticsChart() {
   );
 
   Object.keys(metricAverages).forEach((key) => {
-    metricAverages[key] = +(metricAverages[key] / (ideas.length || 1)).toFixed(1);
+    metricAverages[key] = +(metricAverages[key] / (ventures.length || 1)).toFixed(1);
   });
 
   const metricData = Object.entries(metricAverages).map(([key, value]) => ({
@@ -68,8 +74,8 @@ export function AnalyticsChart() {
   return (
     <Card className="col-span-4">
       <CardHeader>
-        <CardTitle>Ideas Analytics</CardTitle>
-        <CardDescription>Idea creation trends and metric averages</CardDescription>
+        <CardTitle>Ventures Analytics</CardTitle>
+        <CardDescription>Venture creation trends and metric averages</CardDescription>
       </CardHeader>
       <CardContent className="grid gap-8">
         <div className="h-[200px]">
@@ -95,10 +101,19 @@ export function AnalyticsChart() {
               />
               <Line
                 type="monotone"
-                dataKey="ideas"
+                dataKey="ventures"
+                name="Total Ventures"
                 stroke="hsl(var(--primary))"
                 strokeWidth={2}
               />
+              <Line
+                type="monotone"
+                dataKey="active"
+                name="Active Ventures"
+                stroke="hsl(var(--chart-2))"
+                strokeWidth={2}
+              />
+              <Legend />
             </LineChart>
           </ResponsiveContainer>
         </div>

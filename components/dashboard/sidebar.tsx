@@ -10,21 +10,19 @@ import {
   Users,
   BarChart3,
   Calendar,
-  FolderKanban,
   MessagesSquare,
   ChevronLeft,
-  Lightbulb,
   Plus,
   ListTodo,
+  Rocket,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { NewIdeaDialog } from "@/components/ideas/new-idea-dialog";
+import { NewVentureDialog } from "@/components/ventures/new-venture-dialog";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-  { icon: Lightbulb, label: "Ideas", href: "/ideas" },
-  { icon: FolderKanban, label: "Projects", href: "/projects" },
+  { icon: Rocket, label: "Ventures", href: "/ventures" },
   { icon: ListTodo, label: "Attributes", href: "/attributes" },
   { icon: Users, label: "Users", href: "/users" },
   { icon: BarChart3, label: "Analytics", href: "/analytics" },
@@ -37,7 +35,7 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
-  const [newIdeaOpen, setNewIdeaOpen] = useState(false);
+  const [newVentureOpen, setNewVentureOpen] = useState(false);
 
   return (
     <div className={cn("relative", className)}>
@@ -77,10 +75,10 @@ export function Sidebar({ className }: SidebarProps) {
         <div className="px-3 mb-4">
           <Button
             className="w-full justify-start gap-2"
-            onClick={() => setNewIdeaOpen(true)}
+            onClick={() => setNewVentureOpen(true)}
           >
             <Plus className="h-4 w-4" />
-            {!collapsed && "New Idea"}
+            {!collapsed && "New Venture"}
           </Button>
         </div>
 
@@ -104,7 +102,7 @@ export function Sidebar({ className }: SidebarProps) {
         </ScrollArea>
       </div>
 
-      <NewIdeaDialog open={newIdeaOpen} onOpenChange={setNewIdeaOpen} />
+      <NewVentureDialog open={newVentureOpen} onOpenChange={setNewVentureOpen} />
     </div>
   );
 }

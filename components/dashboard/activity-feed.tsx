@@ -8,58 +8,67 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getStoredIdeas } from "@/lib/storage";
+import { getStoredVentures } from "@/lib/storage/ventures";
 import { useEffect, useState } from "react";
-import { Idea } from "@/lib/types/idea";
+import { Venture } from "@/lib/types/venture";
 import { formatDistanceToNow } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, Circle } from "lucide-react";
 
 export function ActivityFeed() {
-  const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [ventures, setVentures] = useState<Venture[]>([]);
 
   useEffect(() => {
-    const loadedIdeas = getStoredIdeas();
-    // Sort ideas by updatedAt date, most recent first
-    loadedIdeas.sort((a, b) => 
+    const loadedVentures = getStoredVentures();
+    // Sort ventures by updatedAt date, most recent first
+    loadedVentures.sort((a, b) => 
       new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
-    setIdeas(loadedIdeas.slice(0, 5)); // Show only the 5 most recent ideas
+    setVentures(loadedVentures.slice(0, 5)); // Show only the 5 most recent ventures
   }, []);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Ideas</CardTitle>
-        <CardDescription>Latest ideas and updates</CardDescription>
+        <CardTitle>Recent Ventures</CardTitle>
+        <CardDescription>Latest ventures and updates</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-8">
-          {ideas.map((idea) => (
-            <div key={idea.id} className="flex items-center">
+          {ventures.map((venture) => (
+            <div key={venture.id} className="flex items-center">
               <Avatar className="h-9 w-9">
                 <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>ID</AvatarFallback>
+                <AvatarFallback>VN</AvatarFallback>
               </Avatar>
               <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {idea.title}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Average score:{" "}
-                  {(
-                    Object.values(idea.metrics).reduce((a, b) => a + b, 0) /
-                    Object.values(idea.metrics).length
-                  ).toFixed(1)}
-                  /10
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium leading-none">
+                    {venture.title}
+                  </p>
+                  {venture.active ? (
+                    <CheckCircle2 className="h-4 w-4 text-primary" />
+                  ) : (
+                    <Circle className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">
+                    {venture.status}
+                  </Badge>
+                  <p className="text-sm text-muted-foreground">
+                    Progress: {venture.progress}%
+                  </p>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(idea.updatedAt), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(venture.updatedAt), { addSuffix: true })}
                 </p>
               </div>
             </div>
           ))}
-          {ideas.length === 0 && (
+          {ventures.length === 0 && (
             <p className="text-center text-muted-foreground">
-              No ideas yet. Create your first idea!
+              No ventures yet. Create your first venture!
             </p>
           )}
         </div>
