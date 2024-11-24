@@ -30,6 +30,17 @@ export interface VentureAssumption {
   createdAt: Date;
 }
 
+export interface VentureEvent {
+  id: string;
+  title: string;
+  when: string;
+  type: 'event' | 'update';
+  detail: string;
+  notes: string;
+  sentiment: 'positive' | 'negative' | 'neutral';
+  createdAt: Date;
+}
+
 export interface Venture {
   id: string;
   title: string;
@@ -38,6 +49,7 @@ export interface Venture {
   resources: VentureResource[];
   risks: VentureRisk[];
   assumptions: VentureAssumption[];
+  events: VentureEvent[];
   attributeProfileId?: string;
   attributes: AttributeValue[];
   team: TeamMember[];

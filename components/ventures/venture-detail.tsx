@@ -24,6 +24,7 @@ import { AttributesSection } from "@/components/attributes/attributes-section";
 import { AttributeValue } from "@/lib/types/attributes";
 import { RisksSection } from "./risks/risks-section";
 import { AssumptionsSection } from "./assumptions/assumptions-section";
+import { EventsSection } from "./events/events-section";
 
 interface VentureDetailProps {
   id: string;
@@ -170,6 +171,12 @@ export function VentureDetail({ id }: VentureDetailProps) {
       <AssumptionsSection
         ventureId={venture.id}
         assumptions={venture.assumptions || []}
+        onUpdate={handleVentureUpdate}
+      />
+
+      <EventsSection
+        ventureId={venture.id}
+        events={venture.events || []}
         onUpdate={handleVentureUpdate}
       />
 

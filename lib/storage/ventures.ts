@@ -1,4 +1,4 @@
-import { Venture, VentureResource, VentureRisk, VentureAssumption } from "../types/venture";
+import { Venture, VentureResource, VentureRisk, VentureAssumption, VentureEvent } from "../types/venture";
 
 const STORAGE_KEY = "ventures";
 
@@ -29,6 +29,7 @@ export function deleteVenture(id: string) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
 }
 
+// Resource methods
 export function addVentureResource(ventureId: string, resource: VentureResource) {
   const ventures = getStoredVentures();
   const venture = ventures.find((v) => v.id === ventureId);
@@ -61,6 +62,7 @@ export function deleteVentureResource(ventureId: string, resourceId: string) {
   }
 }
 
+// Risk methods
 export function addVentureRisk(ventureId: string, risk: VentureRisk) {
   const ventures = getStoredVentures();
   const venture = ventures.find((v) => v.id === ventureId);
@@ -93,6 +95,7 @@ export function deleteVentureRisk(ventureId: string, riskId: string) {
   }
 }
 
+// Assumption methods
 export function addVentureAssumption(ventureId: string, assumption: VentureAssumption) {
   const ventures = getStoredVentures();
   const venture = ventures.find((v) => v.id === ventureId);
@@ -120,6 +123,39 @@ export function deleteVentureAssumption(ventureId: string, assumptionId: string)
   const venture = ventures.find((v) => v.id === ventureId);
   if (venture) {
     venture.assumptions = (venture.assumptions || []).filter((a) => a.id !== assumptionId);
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+// Event methods
+export function addVentureEvent(ventureId: string, event: VentureEvent) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.events = [...(venture.events || []), event];
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function updateVentureEvent(ventureId: string, event: VentureEvent) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.events = (venture.events || []).map((e) =>
+      e.id === event.id ? event : e
+    );
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function deleteVentureEvent(ventureId: string, eventId: string) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.events = (venture.events || []).filter((e) => e.id !== eventId);
     venture.updatedAt = new Date();
     updateVenture(venture);
   }
