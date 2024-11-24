@@ -11,12 +11,22 @@ export interface VentureResource {
   createdAt: Date;
 }
 
+export interface VentureRisk {
+  id: string;
+  title: string;
+  detail: string;
+  mitigationPlan: string;
+  mitigated: boolean;
+  createdAt: Date;
+}
+
 export interface Venture {
   id: string;
   title: string;
   description: string;
   metrics: IdeaMetrics;
   resources: VentureResource[];
+  risks: VentureRisk[];
   attributeProfileId?: string;
   attributes: AttributeValue[];
   team: TeamMember[];

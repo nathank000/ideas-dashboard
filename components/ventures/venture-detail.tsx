@@ -24,6 +24,7 @@ import { SpiderChart } from "@/components/ideas/spider-chart";
 import { ProjectResourcesSection } from "@/components/projects/resources/project-resources-section";
 import { AttributesSection } from "@/components/attributes/attributes-section";
 import { AttributeValue } from "@/lib/types/attributes";
+import { RisksSection } from "./risks/risks-section";
 
 interface VentureDetailProps {
   id: string;
@@ -183,6 +184,12 @@ export function VentureDetail({ id }: VentureDetailProps) {
           onUpdate={handleAttributesUpdate}
         />
       )}
+
+      <RisksSection
+        ventureId={venture.id}
+        risks={venture.risks || []}
+        onUpdate={handleVentureUpdate}
+      />
 
       <ProjectResourcesSection
         projectId={venture.id}

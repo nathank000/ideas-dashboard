@@ -1,4 +1,4 @@
-import { Venture, VentureResource } from "../types/venture";
+import { Venture, VentureResource, VentureRisk } from "../types/venture";
 
 const STORAGE_KEY = "ventures";
 
@@ -56,6 +56,38 @@ export function deleteVentureResource(ventureId: string, resourceId: string) {
   const venture = ventures.find((v) => v.id === ventureId);
   if (venture) {
     venture.resources = (venture.resources || []).filter((r) => r.id !== resourceId);
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function addVentureRisk(ventureId: string, risk: VentureRisk) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.risks = [...(venture.risks || []), risk];
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function updateVentureRisk(ventureId: string, risk: VentureRisk) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.risks = (venture.risks || []).map((r) =>
+      r.id === risk.id ? risk : r
+    );
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function deleteVentureRisk(ventureId: string, riskId: string) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.risks = (venture.risks || []).filter((r) => r.id !== riskId);
     venture.updatedAt = new Date();
     updateVenture(venture);
   }
