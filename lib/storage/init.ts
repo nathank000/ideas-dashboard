@@ -7,6 +7,8 @@ const DEFAULT_INITIATIVE: Initiative = {
   id: "default-initiative",
   title: "General Projects",
   description: "Default initiative for general projects and ventures",
+  icon: "Rocket",
+  color: "blue",
   createdAt: new Date(),
   updatedAt: new Date(),
 };

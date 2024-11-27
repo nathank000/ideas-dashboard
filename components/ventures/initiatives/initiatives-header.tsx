@@ -2,10 +2,12 @@
 
 import { Badge } from "@/components/ui/badge";
 import { getInitiativesForVenture, getStoredInitiatives } from "@/lib/storage/initiatives";
-import { Initiative } from "@/lib/types/initiative";
+import { Initiative, initiativeColors } from "@/lib/types/initiative";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Target } from "lucide-react";
+import * as Icons from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface InitiativesHeaderProps {
   ventureId: string;
@@ -38,16 +40,22 @@ export function InitiativesHeader({ ventureId }: InitiativesHeaderProps) {
     <div className="flex items-center gap-2">
       <Target className="h-4 w-4 text-muted-foreground" />
       <div className="flex flex-wrap gap-2">
-        {initiatives.map((initiative) => (
-          <Link key={initiative.id} href={`/initiatives/${initiative.id}`}>
-            <Badge 
-              variant="outline" 
-              className="hover:bg-secondary cursor-pointer transition-colors"
-            >
-              {initiative.title}
-            </Badge>
-          </Link>
-        ))}
+        {initiatives.map((initiative) => {
+          const IconComponent = Icons[initiative.icon as keyof typeof Icons];
+          return (
+            <Link key={initiative.id} href={`/initiatives/${initiative.id}`}>
+              <Badge 
+                className={cn(
+                  "hover:opacity-80 cursor-pointer transition-colors flex items-center gap-1",
+                  initiativeColors[initiative.color]
+                )}
+              >
+                {IconComponent && <IconComponent className="h-3 w-3" />}
+                {initiative.title}
+              </Badge>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

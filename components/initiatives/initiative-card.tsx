@@ -23,6 +23,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import * as LucideIcons from "lucide-react";
+import { cn } from "@/lib/utils";
+import { initiativeColors } from "@/lib/types/initiative";
 
 interface InitiativeCardProps {
   initiative: Initiative;
@@ -65,7 +67,14 @@ export function InitiativeCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {IconComponent && <IconComponent className="h-5 w-5" />}
+            {IconComponent && (
+              <div className={cn(
+                "p-2 rounded-lg",
+                initiativeColors[initiative.color]
+              )}>
+                <IconComponent className="h-5 w-5" />
+              </div>
+            )}
             <div>
               <CardTitle>{initiative.title}</CardTitle>
               <CardDescription>
