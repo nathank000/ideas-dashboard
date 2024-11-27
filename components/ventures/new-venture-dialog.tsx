@@ -35,6 +35,9 @@ import { AttributeProfile, AttributeValue } from "@/lib/types/attributes";
 import { getStoredAttributeProfiles } from "@/lib/storage/attributes";
 import { Venture } from "@/lib/types/venture";
 import { metricDefinitions } from "@/lib/types/idea";
+import { Initiative } from "@/lib/types/initiative";
+import { getStoredInitiatives, linkVentureToInitiatives } from "@/lib/storage/initiatives";
+import { Badge } from "@/components/ui/badge";
 
 interface NewVentureDialogProps {
   open: boolean;
@@ -62,6 +65,8 @@ export function NewVentureDialog({
   const [progress, setProgress] = useState(initialVenture?.progress || 0);
   const [dueDate, setDueDate] = useState(initialVenture?.dueDate || "");
   const [active, setActive] = useState(initialVenture?.active || false);
+  const [initiatives, setInitiatives] = useState<Initiative[]>([]);
+  const [selectedInitiativeIds, setSelectedInitiativeIds] = useState<string[]>([]);
   const [metrics, setMetrics] = useState(
     initialVenture?.metrics || {
       technicalFeasibility: 5,
@@ -80,6 +85,7 @@ export function NewVentureDialog({
 
   useEffect(() => {
     setAttributeProfiles(getStoredAttributeProfiles());
+    setInitiatives(getStoredInitiatives());
   }, []);
 
   const handleMetricChange = (metric: keyof typeof metrics, value: number[]) => {
@@ -87,6 +93,14 @@ export function NewVentureDialog({
       ...prev,
       [metric]: value[0],
     }));
+  };
+
+  const handleInitiativeToggle = (initiativeId: string) => {
+    setSelectedInitiativeIds(prev => 
+      prev.includes(initiativeId)
+        ? prev.filter(id => id !== initiativeId)
+        : [...prev, initiativeId]
+    );
   };
 
   const handleSubmit = () => {
@@ -121,6 +135,12 @@ export function NewVentureDialog({
       dueDate,
       status,
       active,
+      risks: initialVenture?.risks || [],
+      assumptions: initialVenture?.assumptions || [],
+      events: initialVenture?.events || [],
+      meetingNotes: initialVenture?.meetingNotes || [],
+      decisionLogs: initialVenture?.decisionLogs || [],
+      contacts: initialVenture?.contacts || [],
       createdAt: initialVenture?.createdAt || new Date(),
       updatedAt: new Date(),
     };
@@ -132,6 +152,9 @@ export function NewVentureDialog({
       saveVenture(ventureData);
       toast.success("Venture created successfully!");
     }
+
+    // Link the venture to selected initiatives
+    linkVentureToInitiatives(ventureData.id, selectedInitiativeIds);
 
     if (onVentureSaved) {
       onVentureSaved();
@@ -147,6 +170,7 @@ export function NewVentureDialog({
       setProgress(0);
       setDueDate("");
       setActive(false);
+      setSelectedInitiativeIds([]);
       setMetrics({
         technicalFeasibility: 5,
         timeToMvp: 5,
@@ -185,6 +209,22 @@ export function NewVentureDialog({
           <div className="space-y-2">
             <Label>Description</Label>
             <Editor value={description} onChange={setDescription} />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Initiatives</Label>
+            <div className="flex flex-wrap gap-2">
+              {initiatives.map((initiative) => (
+                <Badge
+                  key={initiative.id}
+                  variant={selectedInitiativeIds.includes(initiative.id) ? "default" : "outline"}
+                  className="cursor-pointer"
+                  onClick={() => handleInitiativeToggle(initiative.id)}
+                >
+                  {initiative.title}
+                </Badge>
+              ))}
+            </div>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">

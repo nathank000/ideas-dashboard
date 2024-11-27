@@ -5,8 +5,18 @@ import { Header } from "@/components/dashboard/header";
 import { StatsCards } from "@/components/dashboard/stats-cards";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { AnalyticsChart } from "@/components/dashboard/analytics-chart";
+import { InitiativeSection } from "@/components/initiatives/initiative-section";
+import { useEffect, useState } from "react";
+import { Initiative } from "@/lib/types/initiative";
+import { getStoredInitiatives } from "@/lib/storage/initiatives";
 
 export default function Home() {
+  const [initiatives, setInitiatives] = useState<Initiative[]>([]);
+
+  useEffect(() => {
+    setInitiatives(getStoredInitiatives());
+  }, []);
+
   return (
     <div className="flex h-screen overflow-hidden">
       <Sidebar className="hidden md:block" />
@@ -26,6 +36,15 @@ export default function Home() {
             <div className="md:col-span-3">
               <ActivityFeed />
             </div>
+          </div>
+
+          <div className="space-y-8">
+            {initiatives.map((initiative) => (
+              <InitiativeSection
+                key={initiative.id}
+                initiative={initiative}
+              />
+            ))}
           </div>
         </div>
       </main>

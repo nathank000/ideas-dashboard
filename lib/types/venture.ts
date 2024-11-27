@@ -1,25 +1,4 @@
-// Update the Contact interface to remove sentiment
-export interface Contact {
-  id: string;
-  name: string;
-  title: string;
-  company: string;
-  phone: string;
-  email: string;
-  linkedIn: string;
-  dateAdded: string;
-  notes: string;
-  createdAt: Date;
-}
-
-// Add a new interface for venture-specific contact reference
-export interface VentureContact {
-  contactId: string;
-  sentiment: 'positive' | 'negative' | 'neutral';
-  dateAdded: string;
-}
-
-// Update the Venture interface
+// Update the Venture interface to include initiative links
 export interface Venture {
   id: string;
   title: string;
@@ -63,4 +42,78 @@ export interface Venture {
   contacts: VentureContact[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+// Rest of the existing types remain the same...
+export interface TeamMember {
+  name: string;
+  avatar: string;
+}
+
+export interface VentureRisk {
+  id: string;
+  title: string;
+  detail: string;
+  mitigationPlan: string;
+  mitigated: boolean;
+  createdAt: Date;
+}
+
+export interface VentureAssumption {
+  id: string;
+  title: string;
+  type: "technical" | "strategic" | "value" | "operational";
+  detail: string;
+  notes: string;
+  holdsTrue: boolean;
+  createdAt: Date;
+}
+
+export interface VentureEvent {
+  id: string;
+  title: string;
+  when: string;
+  type: "event" | "update";
+  detail: string;
+  notes: string;
+  sentiment: "positive" | "negative" | "neutral";
+  createdAt: Date;
+}
+
+export interface MeetingNote {
+  id: string;
+  title: string;
+  when: string;
+  notes: string;
+  sentiment: "positive" | "negative" | "neutral";
+  createdAt: Date;
+}
+
+export interface DecisionLog {
+  id: string;
+  title: string;
+  when: string;
+  notes: string;
+  sentiment: "positive" | "negative" | "neutral";
+  owner: string;
+  createdAt: Date;
+}
+
+export interface Contact {
+  id: string;
+  name: string;
+  title: string;
+  company: string;
+  phone: string;
+  email: string;
+  linkedIn: string;
+  dateAdded: string;
+  notes: string;
+  createdAt: Date;
+}
+
+export interface VentureContact {
+  contactId: string;
+  sentiment: 'positive' | 'negative' | 'neutral';
+  dateAdded: string;
 }

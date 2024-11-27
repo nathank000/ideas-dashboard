@@ -6,8 +6,13 @@ const STORAGE_KEY = "ventures";
 
 export function getStoredVentures(): Venture[] {
   if (typeof window === "undefined") return [];
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : [];
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.error("Error reading ventures from storage:", error);
+    return [];
+  }
 }
 
 export function saveVenture(venture: Venture) {

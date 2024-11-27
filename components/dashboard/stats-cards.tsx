@@ -8,18 +8,23 @@ import {
 } from "@/components/ui/card";
 import { Rocket, TrendingUp, Target, Brain } from "lucide-react";
 import { getStoredVentures } from "@/lib/storage/ventures";
+import { getStoredInitiatives } from "@/lib/storage/initiatives";
 import { useEffect, useState } from "react";
 import { Venture } from "@/lib/types/venture";
+import { Initiative } from "@/lib/types/initiative";
 
 export function StatsCards() {
   const [ventures, setVentures] = useState<Venture[]>([]);
+  const [initiatives, setInitiatives] = useState<Initiative[]>([]);
 
   useEffect(() => {
     setVentures(getStoredVentures());
+    setInitiatives(getStoredInitiatives());
   }, []);
 
   const totalVentures = ventures.length;
   const activeVentures = ventures.filter(v => v.active).length;
+  const totalInitiatives = initiatives.length;
 
   const averageMetrics = ventures.reduce(
     (acc, venture) => {
@@ -63,15 +68,13 @@ export function StatsCards() {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Avg. Feasibility</CardTitle>
+          <CardTitle className="text-sm font-medium">Total Initiatives</CardTitle>
           <Target className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">
-            {avgFeasibility.toFixed(1)}/10
-          </div>
+          <div className="text-2xl font-bold">{totalInitiatives}</div>
           <p className="text-xs text-muted-foreground">
-            Technical, time, and cost metrics
+            Driving strategic goals
           </p>
         </CardContent>
       </Card>
