@@ -36,7 +36,7 @@ import { getStoredAttributeProfiles } from "@/lib/storage/attributes";
 import { Venture } from "@/lib/types/venture";
 import { metricDefinitions } from "@/lib/types/idea";
 import { Initiative } from "@/lib/types/initiative";
-import { getStoredInitiatives, linkVentureToInitiatives } from "@/lib/storage/initiatives";
+import { getInitiativesForVenture, getStoredInitiatives, linkVentureToInitiatives } from "@/lib/storage/initiatives";
 import { Badge } from "@/components/ui/badge";
 
 interface NewVentureDialogProps {
@@ -86,7 +86,13 @@ export function NewVentureDialog({
   useEffect(() => {
     setAttributeProfiles(getStoredAttributeProfiles());
     setInitiatives(getStoredInitiatives());
-  }, []);
+
+    // Load linked initiatives when editing
+    if (initialVenture) {
+      const linkedInitiativeIds = getInitiativesForVenture(initialVenture.id);
+      setSelectedInitiativeIds(linkedInitiativeIds);
+    }
+  }, [initialVenture]);
 
   const handleMetricChange = (metric: keyof typeof metrics, value: number[]) => {
     setMetrics((prev) => ({

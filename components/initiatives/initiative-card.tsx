@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Initiative } from "@/lib/types/initiative";
-import { MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash, Rocket } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +17,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deleteInitiative } from "@/lib/storage/initiatives";
+import { getStoredVentures } from "@/lib/storage/ventures";
+import { getVenturesForInitiative } from "@/lib/storage/initiatives";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
 import * as LucideIcons from "lucide-react";
 
 interface InitiativeCardProps {
@@ -30,6 +35,21 @@ export function InitiativeCard({
   onEdit,
   onDelete,
 }: InitiativeCardProps) {
+  const [linkedVentures, setLinkedVentures] = useState<Array<{ id: string; title: string; status: string }>>([]);
+
+  useEffect(() => {
+    const ventureIds = getVenturesForInitiative(initiative.id);
+    const allVentures = getStoredVentures();
+    const ventures = allVentures
+      .filter(v => ventureIds.includes(v.id))
+      .map(v => ({
+        id: v.id,
+        title: v.title,
+        status: v.status
+      }));
+    setLinkedVentures(ventures);
+  }, [initiative.id]);
+
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this initiative?")) {
       deleteInitiative(initiative.id);
@@ -73,7 +93,30 @@ export function InitiativeCard({
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground">{initiative.description}</p>
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">{initiative.description}</p>
+          
+          {linkedVentures.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Rocket className="h-4 w-4" />
+                <span>Linked Ventures</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {linkedVentures.map((venture) => (
+                  <Link key={venture.id} href={`/ventures/${venture.id}`}>
+                    <Badge 
+                      variant="outline" 
+                      className="hover:bg-secondary cursor-pointer transition-colors"
+                    >
+                      {venture.title}
+                    </Badge>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

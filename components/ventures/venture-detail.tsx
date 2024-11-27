@@ -22,10 +22,10 @@ import { EventsSection } from "./events/events-section";
 import { MeetingNotesSection } from "./meeting-notes/meeting-notes-section";
 import { DecisionLogsSection } from "./decision-logs/decision-logs-section";
 import { ContactsSection } from "./contacts/contacts-section";
-import { InitiativesSection } from "./initiatives/initiatives-section";
 import { NewVentureDialog } from "./new-venture-dialog";
 import { AttributesSection } from "@/components/attributes/attributes-section";
 import { AttributeValue } from "@/lib/types/attributes";
+import { InitiativesHeader } from "./initiatives/initiatives-header";
 import {
   Tabs,
   TabsContent,
@@ -46,20 +46,20 @@ export function VentureDetail({ id }: VentureDetailProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [viewMode, setViewMode] = useState<"tabs" | "list">("tabs");
 
-  useEffect(() => {
+  const loadVenture = () => {
     const ventures = getStoredVentures();
     const found = ventures.find((v) => v.id === id);
     if (found) {
       setVenture(found);
     }
+  };
+
+  useEffect(() => {
+    loadVenture();
   }, [id]);
 
   const handleVentureUpdate = () => {
-    const ventures = getStoredVentures();
-    const updated = ventures.find((v) => v.id === id);
-    if (updated) {
-      setVenture(updated);
-    }
+    loadVenture();
   };
 
   const handleAttributesUpdate = (profileId: string, attributes: AttributeValue[]) => {
@@ -78,12 +78,6 @@ export function VentureDetail({ id }: VentureDetailProps) {
     if (!venture) return null;
 
     const sections = [
-      {
-        title: "Initiatives",
-        content: (
-          <InitiativesSection ventureId={venture.id} />
-        )
-      },
       {
         title: "Contacts",
         content: (
@@ -158,7 +152,7 @@ export function VentureDetail({ id }: VentureDetailProps) {
 
     if (viewMode === "tabs") {
       return (
-        <Tabs defaultValue="initiatives" className="space-y-6">
+        <Tabs defaultValue="contacts" className="space-y-6">
           <TabsList>
             {sections.map(section => (
               <TabsTrigger key={section.title.toLowerCase()} value={section.title.toLowerCase()}>
@@ -193,37 +187,40 @@ export function VentureDetail({ id }: VentureDetailProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/ventures">
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-bold">{venture.title}</h1>
-            {venture.active ? (
-              <CheckCircle2 className="h-5 w-5 text-primary" />
-            ) : (
-              <Circle className="h-5 w-5 text-muted-foreground" />
-            )}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" asChild>
+              <Link href="/ventures">
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
+            <div className="flex items-center gap-2">
+              <h1 className="text-3xl font-bold">{venture.title}</h1>
+              {venture.active ? (
+                <CheckCircle2 className="h-5 w-5 text-primary" />
+              ) : (
+                <Circle className="h-5 w-5 text-muted-foreground" />
+              )}
+            </div>
+            <Badge variant="secondary">{venture.status}</Badge>
           </div>
-          <Badge variant="secondary">{venture.status}</Badge>
+          <div className="flex items-center gap-2">
+            <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "tabs" | "list")}>
+              <ToggleGroupItem value="tabs" aria-label="Tabbed view">
+                <Rows className="h-4 w-4" />
+              </ToggleGroupItem>
+              <ToggleGroupItem value="list" aria-label="List view">
+                <LayoutList className="h-4 w-4" />
+              </ToggleGroupItem>
+            </ToggleGroup>
+            <Button onClick={() => setShowEditDialog(true)}>
+              <Pencil className="h-4 w-4 mr-2" />
+              Edit Venture
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "tabs" | "list")}>
-            <ToggleGroupItem value="tabs" aria-label="Tabbed view">
-              <Rows className="h-4 w-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem value="list" aria-label="List view">
-              <LayoutList className="h-4 w-4" />
-            </ToggleGroupItem>
-          </ToggleGroup>
-          <Button onClick={() => setShowEditDialog(true)}>
-            <Pencil className="h-4 w-4 mr-2" />
-            Edit Venture
-          </Button>
-        </div>
+        <InitiativesHeader ventureId={venture.id} />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">

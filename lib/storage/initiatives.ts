@@ -59,13 +59,11 @@ export function getVentureInitiatives(): VentureInitiative[] {
   }
 }
 
-export function getInitiativesForVenture(ventureId: string): Initiative[] {
+export function getInitiativesForVenture(ventureId: string): string[] {
   const links = getVentureInitiatives();
-  const initiatives = getStoredInitiatives();
-  const initiativeIds = links
+  return links
     .filter((link) => link.ventureId === ventureId)
     .map((link) => link.initiativeId);
-  return initiatives.filter((initiative) => initiativeIds.includes(initiative.id));
 }
 
 export function getVenturesForInitiative(initiativeId: string): string[] {
