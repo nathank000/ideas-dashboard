@@ -9,13 +9,21 @@ import { InitiativeSection } from "@/components/initiatives/initiative-section";
 import { useEffect, useState } from "react";
 import { Initiative } from "@/lib/types/initiative";
 import { getStoredInitiatives } from "@/lib/storage/initiatives";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export default function Home() {
   const [initiatives, setInitiatives] = useState<Initiative[]>([]);
+  const [showNewVentureModal, setShowNewVentureModal] = useState(false);
 
   useEffect(() => {
     setInitiatives(getStoredInitiatives());
   }, []);
+
+  // useHotkeys('ctrl+n', (event) => {
+  //   event.preventDefault();
+  //   console.log('NPK:: ctrl+n pressed');
+  //   setShowNewVentureModal(true);
+  // }, { enableOnFormTags: true });
 
   return (
     <div className="flex h-screen overflow-hidden">

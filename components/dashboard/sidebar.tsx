@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useHotkeys } from "react-hotkeys-hook";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   LayoutDashboard,
@@ -40,6 +41,12 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function Sidebar({ className }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [newVentureOpen, setNewVentureOpen] = useState(false);
+
+  useHotkeys('ctrl+n', (event) => {
+    event.preventDefault();
+    console.log('NPK:: ctrl+n pressed');
+    setNewVentureOpen(true);
+  }, { enableOnFormTags: true });
 
   return (
     <div className={cn("relative", className)}>
