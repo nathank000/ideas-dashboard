@@ -1,4 +1,3 @@
-// Update the Venture interface to include initiative links
 export interface Venture {
   id: string;
   title: string;
@@ -40,11 +39,11 @@ export interface Venture {
   meetingNotes: MeetingNote[];
   decisionLogs: DecisionLog[];
   contacts: VentureContact[];
+  scopeItems: ScopeItem[];
   createdAt: Date;
   updatedAt: Date;
 }
 
-// Rest of the existing types remain the same...
 export interface TeamMember {
   name: string;
   avatar: string;
@@ -116,4 +115,14 @@ export interface VentureContact {
   contactId: string;
   sentiment: 'positive' | 'negative' | 'neutral';
   dateAdded: string;
+}
+
+export interface ScopeItem {
+  id: string;
+  title: string;
+  description: string;
+  status: 'in' | 'out';
+  reason?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -22,6 +22,7 @@ import { EventsSection } from "./events/events-section";
 import { MeetingNotesSection } from "./meeting-notes/meeting-notes-section";
 import { DecisionLogsSection } from "./decision-logs/decision-logs-section";
 import { ContactsSection } from "./contacts/contacts-section";
+import { ScopeSection } from "./scope/scope-section";
 import { NewVentureDialog } from "./new-venture-dialog";
 import { AttributesSection } from "@/components/attributes/attributes-section";
 import { AttributeValue } from "@/lib/types/attributes";
@@ -78,6 +79,16 @@ export function VentureDetail({ id }: VentureDetailProps) {
     if (!venture) return null;
 
     const sections = [
+      {
+        title: "Scope",
+        content: (
+          <ScopeSection
+            ventureId={venture.id}
+            scopeItems={venture.scopeItems || []}
+            onUpdate={handleVentureUpdate}
+          />
+        )
+      },
       {
         title: "Contacts",
         content: (
@@ -152,7 +163,7 @@ export function VentureDetail({ id }: VentureDetailProps) {
 
     if (viewMode === "tabs") {
       return (
-        <Tabs defaultValue="contacts" className="space-y-6">
+        <Tabs defaultValue="scope" className="space-y-6">
           <TabsList>
             {sections.map(section => (
               <TabsTrigger key={section.title.toLowerCase()} value={section.title.toLowerCase()}>

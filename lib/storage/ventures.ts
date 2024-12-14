@@ -1,6 +1,6 @@
 "use client";
 
-import { Venture, VentureContact } from "@/lib/types/venture";
+import { Venture, VentureContact, ScopeItem } from "@/lib/types/venture";
 
 const STORAGE_KEY = "ventures";
 
@@ -233,6 +233,39 @@ export function deleteVentureContact(ventureId: string, contactId: string) {
   const venture = ventures.find((v) => v.id === ventureId);
   if (venture) {
     venture.contacts = venture.contacts.filter((c) => c.contactId !== contactId);
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+// Scope management
+export function addVentureScopeItem(ventureId: string, scopeItem: ScopeItem) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.scopeItems = [...(venture.scopeItems || []), scopeItem];
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function updateVentureScopeItem(ventureId: string, scopeItem: ScopeItem) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.scopeItems = venture.scopeItems.map((item) =>
+      item.id === scopeItem.id ? scopeItem : item
+    );
+    venture.updatedAt = new Date();
+    updateVenture(venture);
+  }
+}
+
+export function deleteVentureScopeItem(ventureId: string, scopeItemId: string) {
+  const ventures = getStoredVentures();
+  const venture = ventures.find((v) => v.id === ventureId);
+  if (venture) {
+    venture.scopeItems = venture.scopeItems.filter((item) => item.id !== scopeItemId);
     venture.updatedAt = new Date();
     updateVenture(venture);
   }
