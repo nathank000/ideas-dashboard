@@ -58,7 +58,7 @@ export function SettingsForm() {
         </CardFooter>
       </Card>
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Notifications</CardTitle>
           <CardDescription>
@@ -94,7 +94,7 @@ export function SettingsForm() {
         <CardFooter>
           <Button>Save Preferences</Button>
         </CardFooter>
-      </Card>
+      </Card> */}
     </div>
   );
 }

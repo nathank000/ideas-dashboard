@@ -42,7 +42,7 @@ export function PublicSharingSettings() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Public Sharing Settings</CardTitle>
+        <CardTitle>Public Venture Sharing Settings</CardTitle>
         <CardDescription>
           Control what information is visible on public venture pages
         </CardDescription>

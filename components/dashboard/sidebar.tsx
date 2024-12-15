@@ -29,10 +29,10 @@ const sidebarItems = [
   { icon: Rocket, label: "Ventures", href: "/ventures" },
   { icon: Users2, label: "Contacts", href: "/contacts" },
   { icon: ListTodo, label: "Attributes", href: "/attributes" },
-  { icon: Users, label: "Users", href: "/users" },
-  { icon: BarChart3, label: "Analytics", href: "/analytics" },
+  // { icon: Users, label: "Users", href: "/users" },
+  // { icon: BarChart3, label: "Analytics", href: "/analytics" },
   { icon: Calendar, label: "Calendar", href: "/calendar" },
-  { icon: MessagesSquare, label: "Messages", href: "/messages" },
+  // { icon: MessagesSquare, label: "Messages", href: "/messages" },
   { icon: Settings, label: "Settings", href: "/settings" },
 ];
 

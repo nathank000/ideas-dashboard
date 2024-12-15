@@ -16,14 +16,14 @@ import {
 import { useState } from "react";
 
 const settingsSections = [
-  { icon: User, label: "Profile", id: "profile" },
-  { icon: Bell, label: "Notifications", id: "notifications" },
-  { icon: Lock, label: "Privacy", id: "privacy" },
-  { icon: Palette, label: "Appearance", id: "appearance" },
-  { icon: Globe, label: "Language", id: "language" },
-  { icon: Shield, label: "Security", id: "security" },
-  { icon: CreditCard, label: "Billing", id: "billing" },
-  { icon: KeyRound, label: "API Keys", id: "api-keys" },
+  // { icon: User, label: "Profile", id: "profile" },
+  // { icon: Bell, label: "Notifications", id: "notifications" },
+  // { icon: Lock, label: "Privacy", id: "privacy" },
+  // { icon: Palette, label: "Appearance", id: "appearance" },
+  // { icon: Globe, label: "Language", id: "language" },
+  // { icon: Shield, label: "Security", id: "security" },
+  // { icon: CreditCard, label: "Billing", id: "billing" },
+  // { icon: KeyRound, label: "API Keys", id: "api-keys" },
 ];
 
 export function SettingsSidebar() {
