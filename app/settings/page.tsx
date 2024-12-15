@@ -2,6 +2,7 @@
 
 import { SettingsForm } from "@/components/settings/settings-form";
 import { SettingsSidebar } from "@/components/settings/settings-sidebar";
+import { PublicSharingSettings } from "@/components/settings/public-sharing-settings";
 
 export default function SettingsPage() {
   return (
@@ -9,7 +10,10 @@ export default function SettingsPage() {
       <h1 className="text-3xl font-bold">Settings</h1>
       <div className="grid gap-6 md:grid-cols-[200px_1fr]">
         <SettingsSidebar />
-        <SettingsForm />
+        <div className="space-y-6">
+          <SettingsForm />
+          <PublicSharingSettings />
+        </div>
       </div>
     </div>
   );

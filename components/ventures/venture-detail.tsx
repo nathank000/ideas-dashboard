@@ -2,41 +2,26 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
-import { ArrowLeft, CheckCircle2, Circle, LayoutList, Pencil, Rows } from "lucide-react";
+import { 
+  ArrowLeft, 
+  CheckCircle2, 
+  Circle, 
+  LayoutList, 
+  Link as LinkIcon, 
+  Pencil, 
+  Rows 
+} from "lucide-react";
 import Link from "next/link";
 import { Venture } from "@/lib/types/venture";
 import { getStoredVentures, updateVenture } from "@/lib/storage/ventures";
-import { SpiderChart } from "./spider-chart";
-import { ResourcesSection } from "./resources/resources-section";
-import { RisksSection } from "./risks/risks-section";
-import { AssumptionsSection } from "./assumptions/assumptions-section";
-import { EventsSection } from "./events/events-section";
-import { MeetingNotesSection } from "./meeting-notes/meeting-notes-section";
-import { DecisionLogsSection } from "./decision-logs/decision-logs-section";
-import { ContactsSection } from "./contacts/contacts-section";
-import { ScopeSection } from "./scope/scope-section";
+import { VentureHeader } from "./venture-header";
+import { VentureMetrics } from "./venture-metrics";
+import { VentureSections } from "./venture-sections";
 import { NewVentureDialog } from "./new-venture-dialog";
-import { AttributesSection } from "@/components/attributes/attributes-section";
 import { AttributeValue } from "@/lib/types/attributes";
-import { InitiativesHeader } from "./initiatives/initiatives-header";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import {
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@/components/ui/toggle-group";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { VentureViewToggle } from "./venture-view-toggle";
 
 interface VentureDetailProps {
   id: string;
@@ -75,213 +60,52 @@ export function VentureDetail({ id }: VentureDetailProps) {
     }
   };
 
-  const renderSections = () => {
-    if (!venture) return null;
-
-    const sections = [
-      {
-        title: "Scope",
-        content: (
-          <ScopeSection
-            ventureId={venture.id}
-            scopeItems={venture.scopeItems || []}
-            onUpdate={handleVentureUpdate}
-          />
-        )
-      },
-      {
-        title: "Contacts",
-        content: (
-          <ContactsSection
-            ventureId={venture.id}
-            contacts={venture.contacts || []}
-            onUpdate={handleVentureUpdate}
-          />
-        )
-      },
-      {
-        title: "Resources",
-        content: (
-          <ResourcesSection
-            ventureId={venture.id}
-            resources={venture.resources || []}
-            onUpdate={handleVentureUpdate}
-          />
-        )
-      },
-      {
-        title: "Risks",
-        content: (
-          <RisksSection
-            ventureId={venture.id}
-            risks={venture.risks || []}
-            onUpdate={handleVentureUpdate}
-          />
-        )
-      },
-      {
-        title: "Assumptions",
-        content: (
-          <AssumptionsSection
-            ventureId={venture.id}
-            assumptions={venture.assumptions || []}
-            onUpdate={handleVentureUpdate}
-          />
-        )
-      },
-      {
-        title: "Events & Updates",
-        content: (
-          <EventsSection
-            ventureId={venture.id}
-            events={venture.events || []}
-            onUpdate={handleVentureUpdate}
-          />
-        )
-      },
-      {
-        title: "Meeting Notes",
-        content: (
-          <MeetingNotesSection
-            ventureId={venture.id}
-            meetingNotes={venture.meetingNotes || []}
-            onUpdate={handleVentureUpdate}
-          />
-        )
-      },
-      {
-        title: "Decision Log",
-        content: (
-          <DecisionLogsSection
-            ventureId={venture.id}
-            decisionLogs={venture.decisionLogs || []}
-            onUpdate={handleVentureUpdate}
-          />
-        )
-      }
-    ];
-
-    if (viewMode === "tabs") {
-      return (
-        <Tabs defaultValue="scope" className="space-y-6">
-          <TabsList>
-            {sections.map(section => (
-              <TabsTrigger key={section.title.toLowerCase()} value={section.title.toLowerCase()}>
-                {section.title}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {sections.map(section => (
-            <TabsContent key={section.title.toLowerCase()} value={section.title.toLowerCase()}>
-              {section.content}
-            </TabsContent>
-          ))}
-        </Tabs>
-      );
-    }
-
-    return (
-      <div className="space-y-6">
-        {sections.map(section => (
-          <div key={section.title.toLowerCase()}>
-            {section.content}
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   if (!venture) {
     return <div>Venture not found</div>;
   }
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/ventures">
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </Button>
-            <div className="flex items-center gap-2">
-              <h1 className="text-3xl font-bold">{venture.title}</h1>
-              {venture.active ? (
-                <CheckCircle2 className="h-5 w-5 text-primary" />
-              ) : (
-                <Circle className="h-5 w-5 text-muted-foreground" />
-              )}
-            </div>
-            <Badge variant="secondary">{venture.status}</Badge>
-          </div>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/ventures">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
           <div className="flex items-center gap-2">
-            <ToggleGroup type="single" value={viewMode} onValueChange={(value) => value && setViewMode(value as "tabs" | "list")}>
-              <ToggleGroupItem value="tabs" aria-label="Tabbed view">
-                <Rows className="h-4 w-4" />
-              </ToggleGroupItem>
-              <ToggleGroupItem value="list" aria-label="List view">
-                <LayoutList className="h-4 w-4" />
-              </ToggleGroupItem>
-            </ToggleGroup>
-            <Button onClick={() => setShowEditDialog(true)}>
-              <Pencil className="h-4 w-4 mr-2" />
-              Edit Venture
-            </Button>
-          </div>
-        </div>
-        <InitiativesHeader ventureId={venture.id} />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Venture Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <h3 className="font-medium">Description</h3>
-              <p className="text-sm text-muted-foreground">
-                {venture.description || "No description provided."}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <h3 className="font-medium">Created</h3>
-              <p className="text-sm text-muted-foreground">
-                {format(new Date(venture.createdAt), "MMMM d, yyyy")}
-              </p>
-            </div>
-            {venture.dueDate && (
-              <div className="space-y-1">
-                <h3 className="font-medium">Due Date</h3>
-                <p className="text-sm text-muted-foreground">
-                  {format(new Date(venture.dueDate), "MMMM d, yyyy")}
-                </p>
-              </div>
+            <h1 className="text-3xl font-bold">{venture.title}</h1>
+            {venture.active ? (
+              <CheckCircle2 className="h-5 w-5 text-primary" />
+            ) : (
+              <Circle className="h-5 w-5 text-muted-foreground" />
             )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Metrics Analysis</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SpiderChart metrics={venture.metrics} />
-          </CardContent>
-        </Card>
+          </div>
+          <Badge variant="secondary">{venture.status}</Badge>
+        </div>
+        <div className="flex items-center gap-2">
+          <VentureViewToggle view={viewMode} onViewChange={setViewMode} />
+          <Button onClick={() => setShowEditDialog(true)}>
+            <Pencil className="h-4 w-4 mr-2" />
+            Edit Venture
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/v/${venture.id}`} target="_blank">
+              <LinkIcon className="h-4 w-4 mr-2" />
+              Public Link
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      {venture.attributeProfileId && (
-        <AttributesSection
-          attributeProfileId={venture.attributeProfileId}
-          attributes={venture.attributes || []}
-          onUpdate={handleAttributesUpdate}
-        />
-      )}
-
-      {renderSections()}
+      <VentureHeader venture={venture} />
+      <VentureMetrics venture={venture} />
+      <VentureSections 
+        venture={venture}
+        viewMode={viewMode}
+        onUpdate={handleVentureUpdate}
+        onAttributesUpdate={handleAttributesUpdate}
+      />
 
       <NewVentureDialog
         open={showEditDialog}
