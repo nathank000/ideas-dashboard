@@ -12,6 +12,8 @@ import { getStoredInitiatives } from "@/lib/storage/initiatives";
 import { useEffect, useState } from "react";
 import { Venture } from "@/lib/types/venture";
 import { Initiative } from "@/lib/types/initiative";
+import Link from "next/link";
+
 
 export function StatsCards() {
   const [ventures, setVentures] = useState<Venture[]>([]);
@@ -56,7 +58,9 @@ export function StatsCards() {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Ventures</CardTitle>
+          <Link href="/ventures">
+            <CardTitle className="text-sm font-medium">Total Ventures</CardTitle>
+          </Link>
           <Rocket className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
@@ -68,7 +72,9 @@ export function StatsCards() {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Initiatives</CardTitle>
+          <Link href="/initiatives">
+            <CardTitle className="text-sm font-medium">Total Initiatives</CardTitle>
+          </Link>
           <Target className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
