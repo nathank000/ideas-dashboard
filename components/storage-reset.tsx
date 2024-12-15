@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { AlertTriangle } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +32,7 @@ export function StorageReset() {
           variant="destructive" 
           className="fixed bottom-4 right-4 z-50"
         >
+          <AlertTriangle className="mr-2 h-4 w-4" />
           Reset App Data
         </Button>
       </AlertDialogTrigger>
