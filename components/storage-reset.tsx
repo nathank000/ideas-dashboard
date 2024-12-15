@@ -1,6 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { initializeStorage } from "@/lib/storage/init";
 import { useRouter } from "next/navigation";
 
@@ -14,12 +25,29 @@ export function StorageReset() {
   };
 
   return (
-    <Button 
-      variant="destructive" 
-      onClick={handleReset}
-      className="fixed bottom-4 right-4 z-50"
-    >
-      Reset App Data
-    </Button>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button 
+          variant="destructive" 
+          className="fixed bottom-4 right-4 z-50"
+        >
+          Reset App Data
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action will reset all app data to its initial state. This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleReset}>
+            Reset Data
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
