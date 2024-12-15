@@ -49,7 +49,62 @@ export function VentureSections({
         />
       )
     },
-    // ... Add other sections
+    {
+      id: "resources",
+      title: "Resources",
+      content: (
+        <ResourcesSection
+          ventureId={venture.id}
+          resources={venture.resources || []}
+          onUpdate={onUpdate}
+        />
+      )
+    },
+    {
+      id: "risks",
+      title: "Risks",
+      content: <RisksSection 
+        ventureId={venture.id} 
+        risks={venture.risks || []}
+        onUpdate={onUpdate}
+      />
+    },
+    {
+      id: "assumptions",
+      title: "Assumptions",
+      content: <AssumptionsSection 
+        ventureId={venture.id}
+        assumptions={venture.assumptions || []}
+        onUpdate={onUpdate}
+      />
+    },
+    {
+      id: "events",
+      title: "Events & Updates",
+      content: <EventsSection 
+        ventureId={venture.id}
+        events={venture.events || []}
+        onUpdate={onUpdate}
+      />
+    },
+    {
+      id: "meeting-notes",
+      title: "Meeting Notes", 
+      content: <MeetingNotesSection
+        ventureId={venture.id}
+        meetingNotes={venture.meetingNotes || []}
+        onUpdate={onUpdate}
+      />
+    },
+    {
+      id: "decision-logs",
+      title: "Decision Logs",
+      content: <DecisionLogsSection 
+        ventureId={venture.id}
+        decisionLogs={venture.decisionLogs || []}
+        onUpdate={onUpdate}
+      />
+    },
   ];
 
   if (viewMode === "tabs") {
