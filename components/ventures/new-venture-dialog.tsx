@@ -307,14 +307,18 @@ export function NewVentureDialog({
                     <Label htmlFor={metric} className="capitalize">
                       {metric.replace(/([A-Z])/g, " $1").trim()}
                     </Label>
-                    <Tooltip>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <p className="text-muted-foreground">{metricDefinitions[metric]}</p>
+                    {/* <Tooltip>
                       <TooltipTrigger>
                         <Info className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>{metricDefinitions[metric]}</p>
                       </TooltipContent>
-                    </Tooltip>
+                    </Tooltip> */}
                   </div>
                   <Slider
                     id={metric}
