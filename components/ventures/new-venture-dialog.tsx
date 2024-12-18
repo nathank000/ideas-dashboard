@@ -310,7 +310,7 @@ export function NewVentureDialog({
                     <br/>
                     <br/>
                     <br/>
-                    <p className="text-muted-foreground">{metricDefinitions[metric]}</p>
+                    <p className="text-muted-foreground">{metricDefinitions[metric].description as string}</p>
                     {/* <Tooltip>
                       <TooltipTrigger>
                         <Info className="h-4 w-4 text-muted-foreground" />
