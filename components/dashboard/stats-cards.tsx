@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Rocket, TrendingUp, Target, Brain } from "lucide-react";
+import { Rocket, TrendingUp, Target, Brain, Boxes} from "lucide-react";
 import { getStoredVentures } from "@/lib/storage/ventures";
 import { getStoredInitiatives } from "@/lib/storage/initiatives";
 import { useEffect, useState } from "react";
@@ -84,6 +84,7 @@ export function StatsCards() {
           </p>
         </CardContent>
       </Card>
+      
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Market Potential</CardTitle>
@@ -98,6 +99,22 @@ export function StatsCards() {
           </p>
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Feasability</CardTitle>
+          <Boxes className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">
+            {avgFeasibility.toFixed(1)}/10
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Feasibility score
+          </p>
+        </CardContent>
+      </Card>
+      
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Active Rate</CardTitle>
