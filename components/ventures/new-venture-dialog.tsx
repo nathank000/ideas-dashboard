@@ -148,6 +148,7 @@ export function NewVentureDialog({
       decisionLogs: initialVenture?.decisionLogs || [],
       contacts: initialVenture?.contacts || [],
       createdAt: initialVenture?.createdAt || new Date(),
+      scopeItems: initialVenture?.scopeItems || [],
       updatedAt: new Date(),
     };
 

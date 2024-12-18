@@ -22,6 +22,7 @@ import { NewVentureDialog } from "./new-venture-dialog";
 import { AttributeValue } from "@/lib/types/attributes";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { VentureViewToggle } from "./venture-view-toggle";
+import { ValidationAI } from "./validation-ai";
 
 interface VentureDetailProps {
   id: string;
@@ -97,9 +98,12 @@ export function VentureDetail({ id }: VentureDetailProps) {
           </Button>
         </div>
       </div>
-
       <VentureHeader venture={venture} />
       <VentureMetrics venture={venture} />
+      
+      {/* add the magic here */}
+      <ValidationAI venture={venture} />
+      
       <VentureSections 
         venture={venture}
         viewMode={viewMode}
