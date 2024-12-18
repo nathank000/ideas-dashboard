@@ -34,7 +34,7 @@ import { useRouter } from "next/navigation";
 import { AttributeProfile, AttributeValue } from "@/lib/types/attributes";
 import { getStoredAttributeProfiles } from "@/lib/storage/attributes";
 import { Venture } from "@/lib/types/venture";
-import { metricDefinitions } from "@/lib/types/idea";
+import { metricDefinitions } from "@/lib/types/venture";
 import { Initiative } from "@/lib/types/initiative";
 import { getInitiativesForVenture, getStoredInitiatives, linkVentureToInitiatives } from "@/lib/storage/initiatives";
 import { Badge } from "@/components/ui/badge";

@@ -10,13 +10,19 @@ import { useEffect, useState } from "react";
 import { Initiative } from "@/lib/types/initiative";
 import { getStoredInitiatives } from "@/lib/storage/initiatives";
 import { useHotkeys } from "react-hotkeys-hook";
+import { VentureScatterPlot } from "@/components/dashboard/venture-scatter-plot";
+import { Venture } from "@/lib/types/venture";
+import { getStoredVentures } from "@/lib/storage/ventures";
+
 
 export default function Home() {
   const [initiatives, setInitiatives] = useState<Initiative[]>([]);
   const [showNewVentureModal, setShowNewVentureModal] = useState(false);
+  const [ventures, setVentures] = useState<Venture[]>([]);
 
   useEffect(() => {
     setInitiatives(getStoredInitiatives());
+    setVentures(getStoredVentures());
   }, []);
 
   // useHotkeys('ctrl+n', (event) => {
@@ -38,9 +44,9 @@ export default function Home() {
           </div>
 
           <StatsCards />
-
+          <VentureScatterPlot ventures={ventures} />
           <div className="grid gap-6 md:grid-cols-7">
-            <AnalyticsChart />
+          <AnalyticsChart />
             <div className="md:col-span-3">
               <ActivityFeed />
             </div>
