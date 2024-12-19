@@ -7,7 +7,6 @@ interface VentureScatterPlotProps {
 }
 
 export function VentureScatterPlot({ ventures, className }: VentureScatterPlotProps) {
-    console.log("VentureScatterPlot ventures passed in ==>", ventures);
 
     const calculateGroupScore = (venture: Venture, group: MetricGroup): number => {
         // Get metrics that belong to this group
@@ -25,11 +24,19 @@ export function VentureScatterPlot({ ventures, className }: VentureScatterPlotPr
 
     const scatterData = ventures.map(venture => {
         console.log("Processing venture:", venture);
+
+        const viability = calculateGroupScore(venture, 'Viable');
+        const feasibility = calculateGroupScore(venture, 'Feasible');
+        const desirability = calculateGroupScore(venture, 'Desirable');
+
+        const dotColor = desirability > 50 ? "#8884d8" : "#82ca9d";
+
         return {
             name: venture.title,
-            viability: calculateGroupScore(venture, 'Viable'),
-            feasibility: calculateGroupScore(venture, 'Feasible'),
-            desirability: calculateGroupScore(venture, 'Desirable'),
+            viability: viability,
+            feasibility: feasibility,
+            desirability: desirability,
+            dotColor: dotColor,
         };
     });
 
