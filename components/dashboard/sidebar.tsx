@@ -25,8 +25,8 @@ import { NewVentureDialog } from "@/components/ventures/new-venture-dialog";
 
 const sidebarItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/" },
-  { icon: Flag, label: "Initiatives", href: "/initiatives" },
   { icon: Rocket, label: "Ventures", href: "/ventures" },
+  { icon: Flag, label: "Initiatives", href: "/initiatives" },
   { icon: Users2, label: "Contacts", href: "/contacts" },
   { icon: ListTodo, label: "Attributes", href: "/attributes" },
   // { icon: Users, label: "Users", href: "/users" },

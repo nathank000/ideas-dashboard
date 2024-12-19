@@ -8,7 +8,7 @@ export function getStoredVentures(): Venture[] {
   if (typeof window === "undefined") return [];
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    console.log("stored", JSON.parse(stored));
+    console.log("getStoredVentures called", JSON.parse(stored));
     return stored ? JSON.parse(stored) : [];
   } catch (error) {
     console.error("Error reading ventures from storage:", error);
@@ -18,6 +18,7 @@ export function getStoredVentures(): Venture[] {
 
 export function saveVenture(venture: Venture) {
   const ventures = getStoredVentures();
+  //console.log("saveVenture called", JSON.stringify(venture));
   ventures.push(venture);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ventures));
 }
