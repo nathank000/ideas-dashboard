@@ -38,6 +38,8 @@ import { metricDefinitions } from "@/lib/types/venture";
 import { Initiative } from "@/lib/types/initiative";
 import { getInitiativesForVenture, getStoredInitiatives, linkVentureToInitiatives } from "@/lib/storage/initiatives";
 import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ChevronDown } from "lucide-react";
 
 interface NewVentureDialogProps {
   open: boolean;
@@ -234,70 +236,88 @@ export function NewVentureDialog({
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select value={status} onValueChange={(value: Venture["status"]) => setStatus(value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="planning">Planning</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="review">Review</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <Collapsible className="space-y-4">
+            <CollapsibleTrigger className="w-full">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground flex items-center gap-2">
+                    Additional Information
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200 data-[state=open]:rotate-180" />
+                  </span>
+                </div>
+              </div>
+            </CollapsibleTrigger>
 
-            <div className="space-y-2">
-              <Label>Attribute Profile</Label>
-              <Select value={attributeProfileId} onValueChange={setAttributeProfileId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select an attribute profile" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
-                  {attributeProfiles.map((profile) => (
-                    <SelectItem key={profile.id} value={profile.id}>
-                      {profile.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <CollapsibleContent className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label>Status</Label>
+                  <Select value={status} onValueChange={(value: Venture["status"]) => setStatus(value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="planning">Planning</SelectItem>
+                      <SelectItem value="in-progress">In Progress</SelectItem>
+                      <SelectItem value="review">Review</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="progress">Progress (%)</Label>
-              <Input
-                id="progress"
-                type="number"
-                min="0"
-                max="100"
-                value={progress}
-                onChange={(e) => setProgress(Number(e.target.value))}
-              />
-            </div>
+                <div className="space-y-2">
+                  <Label>Attribute Profile</Label>
+                  <Select value={attributeProfileId} onValueChange={setAttributeProfileId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an attribute profile" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
+                      {attributeProfiles.map((profile) => (
+                        <SelectItem key={profile.id} value={profile.id}>
+                          {profile.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="due-date">Due Date</Label>
-              <Input
-                id="due-date"
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-              />
-            </div>
-          </div>
+                <div className="space-y-2">
+                  <Label htmlFor="progress">Progress (%)</Label>
+                  <Input
+                    id="progress"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={progress}
+                    onChange={(e) => setProgress(Number(e.target.value))}
+                  />
+                </div>
 
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="active"
-              checked={active}
-              onCheckedChange={setActive}
-            />
-            <Label htmlFor="active">Active Venture</Label>
-          </div>
+                <div className="space-y-2">
+                  <Label htmlFor="due-date">Due Date</Label>
+                  <Input
+                    id="due-date"
+                    type="date"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="active"
+                  checked={active}
+                  onCheckedChange={setActive}
+                />
+                <Label htmlFor="active">Active Venture</Label>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Metrics</h3>
