@@ -21,12 +21,12 @@ export function ValidationAI({ venture }: ValidationAIProps) {
           <div className="flex gap-4">
             <Button variant="outline" className="flex-1">
               <Target className="mr-2 h-4 w-4" />
-              Market Verify
-            </Button>
+              Market Verification
+            </Button> >>
             <Button variant="outline" className="flex-1">
               <Users className="mr-2 h-4 w-4" />
               Persona Generation
-            </Button>
+            </Button> >>
             <Button variant="outline" className="flex-1">
               <TrendingUp className="mr-2 h-4 w-4" />
               Persona Marketing
