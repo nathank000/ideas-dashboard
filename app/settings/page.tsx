@@ -3,6 +3,7 @@
 import { SettingsForm } from "@/components/settings/settings-form";
 import { SettingsSidebar } from "@/components/settings/settings-sidebar";
 import { PublicSharingSettings } from "@/components/settings/public-sharing-settings";
+import { SurveySettings } from "@/components/settings/survey-settings";
 
 export default function SettingsPage() {
   return (
@@ -12,6 +13,7 @@ export default function SettingsPage() {
         <SettingsSidebar />
         <div className="space-y-6">
           <SettingsForm />
+          <SurveySettings />
           <PublicSharingSettings />
         </div>
       </div>
